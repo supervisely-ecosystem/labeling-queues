@@ -1,0 +1,40 @@
+<div id="annotations-controller-ecosystem-application">
+    <sly-style>
+        #annotations-controller-ecosystem-application .custom-sly-card-border-radius {
+        border-radius: 35px;
+        padding: 18px 24px;
+        }
+
+        #annotations-controller-ecosystem-application .beautiful-table { border-collapse: collapse; }
+        #annotations-controller-ecosystem-application .beautiful-table tr:nth-child(2n) { background-color: #f6f8fa; }
+        #annotations-controller-ecosystem-application .beautiful-table td, .beautiful-table th {
+        border: 1px solid #dfe2e5;
+        padding: 6px 13px;
+        text-align: center;
+        line-height: 20px;
+        }
+        .#annotations-controller-ecosystem-application beautiful-table.al td, .beautiful-table.al th {
+        text-align: left;
+        }
+    </sly-style>
+
+    {% include 'src/ui/select_data.html' %}
+    {% include 'src/ui/select_users.html' %}
+
+    <el-dialog
+            title="Restart from this step"
+            :visible.sync="state.restartFrom"
+            size="tiny">
+        <span>This step and all next steps will be reseted</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="state.restartFrom = null">Cancel</el-button>
+            <!--        $nextTick(() => { $refs['card3'].$el.scrollIntoView({behavior: 'smooth', block: 'center'}); });-->
+            <el-button type="primary" class="regular"
+                       @click="command('restart');">
+                Confirm
+            </el-button>
+        </span>
+    </el-dialog>
+
+
+</div>

@@ -1,0 +1,39 @@
+<sly-card
+        class="custom-sly-card-border-radius mb10"
+        title="Select data to Annotate"
+        subtitle="add items from table to annotation queue"
+        style="width: 600px">
+    <div v-loading="state.refreshingData" element-loading-text="refreshing table...">
+        <sly-field>
+            <sly-table class="mt10"
+                       v-if="data.dataTable.length > 0"
+                       :options="{perPage: 20, pageSizes: 20}"
+                       :content="data.dataTable"
+
+            >
+            </sly-table>
+        </sly-field>
+
+        <div class="fflex"
+             style="flex-direction: row; justify-content: space-between; align-items: center">
+
+            <div>
+                <el-button
+                        @click="state.refreshingData=true; command('add_data_to_queue');"
+                        type="success"
+                        class="regular mt10">
+                    Add to Queue
+                </el-button>
+            </div>
+            <div>
+                <el-button type="warning" class="regular mt10" :plain="true"
+                           @click="state.refreshingData=true; command('refresh_data_table');">
+                    <i class="zmdi zmdi-refresh mr5"></i>Refresh table
+                </el-button>
+
+            </div>
+
+
+        </div>
+    </div>
+</sly-card>

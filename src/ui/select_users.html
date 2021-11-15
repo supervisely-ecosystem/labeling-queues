@@ -1,0 +1,74 @@
+<sly-card
+        class="custom-sly-card-border-radius mt10 mb10"
+        title="Select users permissions"
+        subtitle="selected users will be able to annotate and review data"
+        style="width: 600px">
+    <div v-loading="state.refreshingUsersTable" element-loading-text="refreshing table...">
+        <sly-field>
+
+            <table class="beautiful-table" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th v-for="col in data.usersTableHeaders">
+                        <div v-html="col['title']"></div>
+                        <!--                        <div style="color: #7f858e; font-weight: normal; font-size: 12px;">-->
+                        <!--                            {{ col["subtitle"] }}-->
+                        <!--                        </div>-->
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(row, row_index) in data.usersTable">
+                    <td v-for="(col, col_index) in row.columns">
+
+                        <div v-if="col.title === 'id'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'login'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'role'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'last login'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'can annotate'">
+                            <el-switch
+                                    v-model="state.annotatorsIds[row.user_id]"
+                                    on-text=""
+                                    off-text=""
+                                    :disabled="false">
+                            </el-switch>
+                        </div>
+                        <div v-if="col.title === 'can review'">
+                            <el-switch
+                                    v-model="state.reviewersIds[row.user_id]"
+                                    on-text=""
+                                    off-text=""
+                                    :disabled="false">
+                            </el-switch>
+                        </div>
+
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </sly-field>
+
+        <div class="fflex"
+             style="flex-direction: row; justify-content: flex-end; align-items: center">
+            <div>
+                <el-button type="warning" class="regular mt10" :plain="true"
+                           @click="state.refreshingUsersTable=true; command('refresh_users_table');">
+                    <i class="zmdi zmdi-refresh mr5"></i>Refresh table
+                </el-button>
+
+            </div>
+
+
+        </div>
+    </div>
+</sly-card>
