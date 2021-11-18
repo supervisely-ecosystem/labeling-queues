@@ -2,8 +2,24 @@ import functools
 import time
 import datetime
 
-import sly_globals as g
 import supervisely_lib as sly
+
+import sly_globals as g
+import sly_functions as f
+
+
+def init_fields(state, data):
+    state['refreshingUsersTable'] = False
+    state['reviewNeeded'] = False
+
+    data['usersTable'] = fill_users_table()
+    data['usersTableHeaders'] = f.get_table_headers_by_table(data['usersTable'])
+
+    state['annotatorsIds'] = {row['user_id']: get_user_status(data['usersTable'], row['user_id'], 'can annotate')
+                              for row in data['usersTable']}
+
+    state['reviewersIds'] = {row['user_id']: get_user_status(data['usersTable'], row['user_id'], 'can review')
+                             for row in data['usersTable']}
 
 
 def get_user_last_seen(datetime_str):
@@ -45,20 +61,6 @@ def get_user_status(table, user_id, key):
                 if column['title'] == key:
                     return column['value']
 
-
-def init_fields(state, data):
-    state['refreshingUsersTable'] = False
-    state['reviewNeeded'] = False
-
-    data['usersTable'] = fill_users_table()
-    data['usersTableHeaders'] = [{'title': column['title']} for column
-                                 in data['usersTable'][0]['columns']]
-
-    state['annotatorsIds'] = {row['user_id']: get_user_status(data['usersTable'], row['user_id'], 'can annotate')
-                              for row in data['usersTable']}
-
-    state['reviewersIds'] = {row['user_id']: get_user_status(data['usersTable'], row['user_id'], 'can review')
-                             for row in data['usersTable']}
 
 
 @g.my_app.callback("refresh_users_table")

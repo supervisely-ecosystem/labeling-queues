@@ -2,6 +2,8 @@ import functools
 import os
 from pathlib import Path
 import sys
+
+import supervisely_lib
 import supervisely_lib as sly
 import pickle
 
@@ -9,6 +11,8 @@ from dotenv import load_dotenv  # pip install python-dotenv\
 
 load_dotenv("../debug.env")
 load_dotenv("../secret_debug.env", override=True)
+
+supervisely_lib.logger.setLevel('DEBUG')
 
 my_app = sly.AppService()
 api = my_app.public_api
@@ -38,6 +42,13 @@ sys.path.append(ui_sources_dir)
 
 
 annotation_controller_status_tag_name = 'annotation_controller_status_tag'
+
+item_status_by_code = {
+    0: 'not annotated',
+    1: 'in process',
+    2: 'on review',
+    3: 'not annotated',
+}
 
 
 # def get_updated_fields(func, field_name='state'):

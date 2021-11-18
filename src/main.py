@@ -19,5 +19,8 @@ def main():
     g.my_app.run(data=data, state=state)
 
 
+#  @TODO: publish API method video.add_tag
+#  @TODO: publish update_fields decorator
+
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

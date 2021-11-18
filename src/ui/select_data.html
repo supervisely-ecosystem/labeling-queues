@@ -1,17 +1,58 @@
 <sly-card
-        class="custom-sly-card-border-radius mb10"
+        class="custom-sly-card-border-radius mt10 mb10"
         title="Select data to Annotate"
         subtitle="add items from table to annotation queue"
-        style="width: 600px">
+        style="width: 50%">
     <div v-loading="state.refreshingData" element-loading-text="refreshing table...">
         <sly-field>
-            <sly-table class="mt10"
-                       v-if="data.dataTable.length > 0"
-                       :options="{perPage: 20, pageSizes: 20}"
-                       :content="data.dataTable"
+            <table class="beautiful-table" style="width: 100%;">
+                <thead>
+                <tr>
+                    <th v-for="col in data.itemsTableHeaders">
+                        <div v-if="col['title'] !== 'selected'" v-html="col['title']"></div>
 
-            >
-            </sly-table>
+                        <div v-if="col['title'] === 'selected'">
+                            <el-checkbox v-model="state.selectAllItems"
+                            @input="command('toggle_all_items')"
+                            ></el-checkbox>
+                        </div>
+                        <!--                        <div style="color: #7f858e; font-weight: normal; font-size: 12px;">-->
+                        <!--                            {{ col["subtitle"] }}-->
+                        <!--                        </div>-->
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(row, row_index) in data.itemsTable">
+                    <td v-for="(col, col_index) in row.columns">
+
+                        <div v-if="col.title === 'selected'">
+                            <el-checkbox v-model="state.selectedItemsIds[row.item_id]"></el-checkbox>
+                        </div>
+                        <div v-if="col.title === 'status'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'id'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'name'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'dataset'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'frames'">
+                            {{ col.value }}
+                        </div>
+                        <div v-if="col.title === 'duration (sec)'">
+                            {{ col.value }}
+                        </div>
+
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </sly-field>
 
         <div class="fflex"

@@ -5,7 +5,11 @@
         padding: 18px 24px;
         }
 
-        #annotations-controller-ecosystem-application .beautiful-table { border-collapse: collapse; }
+        #annotations-controller-ecosystem-application .beautiful-table {
+        border-collapse: collapse;
+        overflow-x: scroll;
+
+        }
         #annotations-controller-ecosystem-application .beautiful-table tr:nth-child(2n) { background-color: #f6f8fa; }
         #annotations-controller-ecosystem-application .beautiful-table td, .beautiful-table th {
         border: 1px solid #dfe2e5;
@@ -18,8 +22,8 @@
         }
     </sly-style>
 
-    {% include 'src/ui/select_data.html' %}
     {% include 'src/ui/select_users.html' %}
+
 
     <el-dialog
             title="Restart from this step"

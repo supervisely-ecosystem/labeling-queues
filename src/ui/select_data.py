@@ -1,5 +1,6 @@
 import functools
 
+import sly_functions as f
 import sly_globals as g
 import supervisely_lib as sly
 
@@ -20,7 +21,22 @@ def init_fields(state, data):
     state['refreshingData'] = False
     state['reviewNeeded'] = False
 
-    data['dataTable'] = fill_table()
+    data['itemsTable'] = fill_table()
+    data['itemsTableHeaders'] = f.get_table_headers_by_table(data['itemsTable'])
+
+    state['selectAllItems'] = False
+    state['selectedItemsIds'] = {row['item_id']: False for row in data['itemsTable']}
+
+
+@g.my_app.callback("toggle_all_items")
+@sly.timeit
+@g.update_fields
+def add_data_to_queue(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
+    flag = state['selectAllItems']
+    for curr_key in state['selectedItemsIds'].keys():
+        state['selectedItemsIds'][curr_key] = flag
+
+    fields_to_update['state.selectedItemsIds'] = state['selectedItemsIds']
 
 
 @g.my_app.callback("add_data_to_queue")
@@ -45,17 +61,17 @@ def get_status_tag_id_of_project():
     return -1
 
 
-def get_item_status_by_id(item_id, item_type):
-    item_info = eval(f'g.api.{item_type}.get_info_by_id({item_id})')
+def get_item_status_by_id(item_info):
     item_tags = item_info.tags
-
     status_tag_id = get_status_tag_id_of_project()
 
     for item_tag in item_tags:
         if item_tag.get('tagId', -1) == status_tag_id:
-            return 'F'  # @TODO: replace to real value
+            return item_tag.get('value', 'err')
 
-    return 'NF'  # @TODO: replace to real value
+    g.api.video.tag.add_tag_to_video(project_meta_tag_id=status_tag_id, video_id=item_info.id,
+                                     value=g.item_status_by_code[0])
+    return g.item_status_by_code[0]
 
 
 def get_item_duration(current_item):
@@ -72,15 +88,17 @@ def fill_table_for_videos_project(table):
         items_list = g.api.video.get_list(current_dataset.id)
 
         for current_item in items_list:
-            table_row = {key: None for key in ['status', 'name', 'dataset', 'frames', 'duration']}
+            table_row = []
 
-            table_row['status'] = get_item_status_by_id(current_item.id, 'video')
-            table_row['name'] = current_item.name
-            table_row['dataset'] = current_dataset.name
-            table_row['frames'] = current_item.frames_count
-            table_row['duration'] = get_item_duration(current_item)
+            table_row.append({'title': 'selected', 'value': False})
+            table_row.append({'title': 'status', 'value': get_item_status_by_id(current_item)})
+            table_row.append({'title': 'id', 'value': current_item.id})
+            table_row.append({'title': 'name', 'value': current_item.name})
+            table_row.append({'title': 'dataset', 'value': current_dataset.name})
+            table_row.append({'title': 'frames', 'value': current_item.frames_count})
+            table_row.append({'title': 'duration (sec)', 'value': get_item_duration(current_item)})
 
-            table.append(table_row)
+            table.append({'item_id': current_item.id, 'columns': table_row})
 
 
 
