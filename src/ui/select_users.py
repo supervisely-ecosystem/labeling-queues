@@ -10,16 +10,11 @@ import sly_functions as f
 
 def init_fields(state, data):
     state['refreshingUsersTable'] = False
-    state['reviewNeeded'] = False
 
-    data['usersTable'] = fill_users_table()
-    data['usersTableHeaders'] = f.get_table_headers_by_table(data['usersTable'])
+    data['usersTable'] = get_users_table()
 
-    state['annotatorsIds'] = {row['user_id']: get_user_status(data['usersTable'], row['user_id'], 'can annotate')
-                              for row in data['usersTable']}
-
-    state['reviewersIds'] = {row['user_id']: get_user_status(data['usersTable'], row['user_id'], 'can review')
-                             for row in data['usersTable']}
+    state['annotatorsIds'] = {row['id']: row['can_annotate'] for row in data['usersTable']}
+    state['reviewersIds'] = {row['id']: row['can_review'] for row in data['usersTable']}
 
 
 def get_user_last_seen(datetime_str):
@@ -36,36 +31,47 @@ def get_user_last_seen(datetime_str):
         return "long time ago"
 
 
-def fill_users_table():
+def get_users_table():
     table = []
 
     g.team_members = g.api.user.get_team_members(g.team_id)
+
+    # for i in range(100):  # DEBUG
     for current_item in g.team_members:
-        table_row = []
+        table_row = {}
 
-        table_row.append({'title': 'id', 'value': current_item.id})
-        table_row.append({'title': 'login', 'value': current_item.login})
-        table_row.append({'title': 'role', 'value': current_item.role})
-        table_row.append({'title': 'last login', 'value': get_user_last_seen(current_item.last_login)})
-        table_row.append({'title': 'can annotate', 'value': current_item.role == 'annotator'})
-        table_row.append({'title': 'can review', 'value': current_item.role == 'reviewer'})
+        table_row['id'] = current_item.id
+        table_row['login'] = current_item.login
+        table_row['role'] = current_item.role
+        table_row['last_login'] = get_user_last_seen(current_item.last_login)
+        table_row['can_annotate'] = current_item.role == 'annotator'
+        table_row['can_review'] = current_item.role == 'reviewer'
 
-        table.append({'user_id': current_item.id, 'columns': table_row})
+        table.append(table_row)
     return table
-
-
-def get_user_status(table, user_id, key):
-    for row in table:
-        if row['user_id'] == user_id:
-            for column in row['columns']:
-                if column['title'] == key:
-                    return column['value']
-
 
 
 @g.my_app.callback("refresh_users_table")
 @sly.timeit
 @g.update_fields
-def refresh_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
+def refresh_users_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersTable'] = False
-    fields_to_update['data.usersTable'] = fill_users_table()
+
+    newest_table = get_users_table()
+    current_table = api.task.get_field(g.task_id, 'data.usersTable')
+
+    users_ids_in_table = [row['id'] for row in current_table]
+
+    for row in newest_table:
+        if row['id'] not in users_ids_in_table:
+            current_table.append(row)
+
+    state['annotatorsIds'].update({row['id']: row['can_annotate'] for row in current_table
+                                   if row['id'] not in users_ids_in_table})
+
+    state['reviewersIds'].update({row['id']: row['can_review'] for row in current_table
+                                  if row['id'] not in users_ids_in_table})
+
+    fields_to_update['state.annotatorsIds'] = state['annotatorsIds']
+    fields_to_update['state.reviewersIds'] = state['reviewersIds']
+    fields_to_update['data.usersTable'] = current_table

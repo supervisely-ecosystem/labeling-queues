@@ -1,61 +1,77 @@
 <sly-card
         class="custom-sly-card-border-radius mb10"
-        title="Select users permissions"
-        subtitle="selected users will be able to annotate and review data"
-        style="width: 50%">
+        title="Set Permissions"
+        subtitle="set users permissions to annotate and review data"
+        style="width: 100%">
     <div v-loading="state.refreshingUsersTable" element-loading-text="refreshing table...">
         <sly-field>
+            <el-table
+                    :data="data.usersTable"
+                    border
+                    class="disable_overflow_by_x_for_table"
+                    style="width: 100%"
+                    max-height="250">
+                <el-table-column
 
-            <table class="beautiful-table" style="width: 100%;">
-                <thead>
-                <tr>
-                    <th v-for="col in data.usersTableHeaders">
-                        <div v-html="col['title']"></div>
-                        <!--                        <div style="color: #7f858e; font-weight: normal; font-size: 12px;">-->
-                        <!--                            {{ col["subtitle"] }}-->
-                        <!--                        </div>-->
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(row, row_index) in data.usersTable">
-                    <td v-for="(col, col_index) in row.columns">
+                        prop="id"
+                        sortable
+                        label="USER ID"
+                        width="120px">
+                    <template scope="scope">
+                        {{scope.row.id}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="login"
+                        sortable
+                        label="LOGIN"
+                >
+                    <template scope="scope">
+                        {{scope.row.login}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="role"
+                        sortable
+                        label="ROLE"
+                >
+                    <template scope="scope">
+                        {{scope.row.role}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="LAST LOGIN"
+                >
+                    <template scope="scope">
+                        {{scope.row.last_login}}
+                    </template>
+                </el-table-column>
 
-                        <div v-if="col.title === 'id'">
-                            {{ col.value }}
-                        </div>
-                        <div v-if="col.title === 'login'">
-                            {{ col.value }}
-                        </div>
-                        <div v-if="col.title === 'role'">
-                            {{ col.value }}
-                        </div>
-                        <div v-if="col.title === 'last login'">
-                            {{ col.value }}
-                        </div>
-                        <div v-if="col.title === 'can annotate'">
-                            <el-switch
-                                    v-model="state.annotatorsIds[row.user_id]"
-                                    on-text=""
-                                    off-text=""
-                                    :disabled="false">
-                            </el-switch>
-                        </div>
-                        <div v-if="col.title === 'can review'">
-                            <el-switch
-                                    v-model="state.reviewersIds[row.user_id]"
-                                    on-text=""
-                                    off-text=""
-                                    :disabled="false">
-                            </el-switch>
-                        </div>
+                <el-table-column
+                        label="CAN ANNOTATE">
+                    <template scope="scope">
+                        <el-switch
+                                v-model="state.annotatorsIds[scope.row.id]"
+                                on-text=""
+                                off-text="">
+                        </el-switch>
 
+                    </template>
+                </el-table-column>
 
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                <el-table-column
+                        label="CAN REVIEW">
+                    <template scope="scope">
+                        <el-switch
+                                v-model="state.reviewersIds[scope.row.id]"
+                                on-text=""
+                                off-text="">
+                        </el-switch>
 
+                    </template>
+                </el-table-column>
+
+            </el-table>
         </sly-field>
 
         <div class="fflex"

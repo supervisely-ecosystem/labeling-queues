@@ -1,0 +1,117 @@
+<sly-card
+        class="custom-sly-card-border-radius mb10"
+        title="Annotators Stats"
+        subtitle="statistics for every worker"
+        style="width: 100%">
+    <div v-loading="state.refreshingUsersStatsTable" element-loading-text="refreshing table...">
+        <sly-field>
+            <el-table
+                    :data="data.usersStatsTable"
+                    border
+                    class="disable_overflow_by_x_for_table"
+                    style="width: 100%"
+                    max-height="250">
+
+                <el-table-column
+
+                        prop="performance"
+                        sortable
+                        label="PERFORMANCE"
+                        width="160px">
+                    <template scope="scope">
+                        <div v-if="scope.row.performance === 'very low'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #FF2400"></i>
+                            {{scope.row.performance}}
+                        </div>
+                        <div v-if="scope.row.performance === 'low'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #FFA800"></i>
+                            {{scope.row.performance}}
+                        </div>
+                        <div v-if="scope.row.performance === 'normal'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #FFFF00"></i>
+                            {{scope.row.performance}}
+                        </div>
+                        <div v-if="scope.row.performance === 'high'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #b9ff3f"></i>
+                            {{scope.row.performance}}
+                        </div>
+                        <div v-if="scope.row.performance === 'very high'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #3cb800"></i>
+                            {{scope.row.performance}}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column
+
+                        prop="id"
+                        sortable
+                        label="USER ID"
+                        width="120px">
+                    <template scope="scope">
+                        {{scope.row.id}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="login"
+                        sortable
+                        label="LOGIN"
+                >
+                    <template scope="scope">
+                        {{scope.row.login}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="role"
+                        sortable
+                        label="ROLE"
+                >
+                    <template scope="scope">
+                        {{scope.row.role}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        width="110px"
+                        label="VIDEOS">
+                    <template scope="scope">
+                        {{scope.row.videos_annotated}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        width="110px"
+                        label="TAGS">
+                    <template scope="scope">
+                        {{scope.row.tags_created}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="WORK TIME">
+                    <template scope="scope">
+                        {{scope.row.work_time}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        sortable
+                        prop="tags_per_time"
+                        label="TAGS / TIME">
+                    <template scope="scope">
+                        {{scope.row.tags_per_time}}
+                    </template>
+                </el-table-column>
+
+            </el-table>
+        </sly-field>
+
+        <div class="fflex"
+             style="flex-direction: row; justify-content: flex-end; align-items: center">
+            <div>
+                <el-button type="warning" class="regular mt10" :plain="true"
+                           @click="state.refreshingUsersStatsTable=true; command('refresh_users_stats_table');">
+                    <i class="zmdi zmdi-refresh mr5"></i>Refresh table
+                </el-button>
+
+            </div>
+
+
+        </div>
+    </div>
+</sly-card>

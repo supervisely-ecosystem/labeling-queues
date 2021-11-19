@@ -131,3 +131,4 @@ dmypy.json
 secret_debug.env
 
 .idea
+supervisely_lib
