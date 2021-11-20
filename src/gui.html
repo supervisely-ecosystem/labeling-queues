@@ -26,12 +26,35 @@
         overflow-x:hidden;
         }
 
+        #annotations-controller-ecosystem-application .hide-percentage-from-progress .el-progress__text {
+        display: none;
+        }
+
+
+        #annotations-controller-ecosystem-application .custom-collapse {
+        cursor:pointer;
+        transition: all 0.2s;
+
+
+        }
+
+        #annotations-controller-ecosystem-application .custom-collapse:hover {
+
+        color: #039aff;
+        }
+
+        #annotations-controller-ecosystem-application .div-without-paddings .content {
+        padding:0 0;
+
+        }
+
 
 
     </sly-style>
 
     {% include 'src/ui/select_users.html' %}
     {% include 'src/ui/users_stats.html' %}
+    {% include 'src/ui/queue_stats.html' %}
 
 
     <el-dialog

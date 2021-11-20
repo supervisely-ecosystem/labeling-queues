@@ -1,5 +1,6 @@
 import functools
 import os
+import queue
 from pathlib import Path
 import sys
 import pickle
@@ -42,20 +43,13 @@ sys.path.append(ui_sources_dir)
 
 annotation_controller_status_tag_name = 'annotation_controller_status_tag'
 
-api.project.update_custom_data(project_id,
-                               {'users2stats':
-                                   {
-                                       "1": {
-                                           'items_annotated': 10,
-                                           'tags_created': 15,
-                                           'work_time': 10800
-                                       },
-
-                                   }
-                               })  # DEBUG
-
 project_custom_data = f.get_project_custom_data(project_id)
+
+item2stats = {}  # item_id -> his stats
 user2stats = project_custom_data.get('users2stats', {})  # user_id -> his stats
+
+
+labeling_queue = queue.Queue(maxsize=int(1e5))
 
 
 def update_fields(func):

@@ -1,3 +1,5 @@
+import datetime
+
 import sly_globals as g
 
 from sly_fields_names import ItemsStatusField
@@ -10,7 +12,7 @@ def get_status_tag_id_of_project():
     return -1
 
 
-def get_item_status_by_id(item_info):
+def get_item_status_by_info(item_info):
     item_tags = item_info.tags
     status_tag_id = get_status_tag_id_of_project()
 
@@ -24,16 +26,25 @@ def get_item_status_by_id(item_info):
     return ItemsStatusField.NEW
 
 
-def get_items_list():
-    datasets_list = g.api.dataset.get_list(g.project_id)
+def get_project_items_info(project_id):
+    datasets_list = g.api.dataset.get_list(project_id)
 
     for current_dataset in datasets_list:
         items_list = g.api.video.get_list(current_dataset.id)
-        print()
 
+        for current_item in items_list:
+            table_row = {}
 
-def load_users_stats_from_project(project_id):
-    pass
+            table_row['status'] = get_item_status_by_info(current_item)
+            table_row['item_id'] = current_item.id
+            table_row['item_name'] = current_item.name
+            table_row['dataset'] = current_dataset.name
+            table_row['item_frames'] = current_item.frames_count
+            table_row['duration'] = get_item_duration(current_item)
+
+            table_row['item_work_time'] = str(datetime.timedelta(seconds=round(0)))
+
+            g.item2stats[current_item.id] = table_row
 
 
 def get_project_custom_data(project_id):
@@ -42,3 +53,13 @@ def get_project_custom_data(project_id):
         return project_info.custom_data
     else:
         return {}
+
+
+def get_item_duration(current_item):
+    try:
+        return str(datetime.timedelta(seconds=round(current_item.frames_count * current_item.frames_to_timecodes[1])))
+    except:
+        return str(datetime.timedelta(seconds=round(0)))
+
+
+

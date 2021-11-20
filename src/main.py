@@ -1,6 +1,15 @@
 import supervisely_lib as sly
-import sly_globals as g
 import ui as ui
+
+import sly_globals as g
+import sly_functions as f
+
+
+def fill_queues_by_project(project_id):
+    f.get_project_items_info(project_id)
+
+    items_to_put = list(g.item2stats.keys())
+    [g.labeling_queue.put(query) for query in items_to_put]
 
 
 def main():
@@ -15,7 +24,9 @@ def main():
     data = {}
     state = {}
 
+    fill_queues_by_project(g.project_id)
     ui.init(data=data, state=state)  # init data for UI widgets
+
     g.my_app.run(data=data, state=state)
 
 
