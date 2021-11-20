@@ -20,8 +20,8 @@ def get_item_status_by_info(item_info):
         if item_tag.get('tagId', -1) == status_tag_id:
             return item_tag.get('value', 'err')
 
-    g.api.video.tag.add_value(project_meta_tag_id=status_tag_id, video_id=item_info.id,
-                              value=ItemsStatusField.NEW)
+    g.api.video.tag.add_tag(project_meta_tag_id=status_tag_id, video_id=item_info.id,
+                            value=ItemsStatusField.NEW)
 
     return ItemsStatusField.NEW
 
@@ -60,6 +60,3 @@ def get_item_duration(current_item):
         return str(datetime.timedelta(seconds=round(current_item.frames_count * current_item.frames_to_timecodes[1])))
     except:
         return str(datetime.timedelta(seconds=round(0)))
-
-
-
