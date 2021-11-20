@@ -98,9 +98,9 @@ def get_users_stats_table(state, users_table):
 
     for current_user in users_table:
         table_row = {}
-        if state['annotatorsIds'].get(current_user['id'], False):
-            current_user['id'] = str(current_user['id'])
+        current_user['id'] = str(current_user['id'])
 
+        if state['annotatorsIds'].get(current_user['id'], False):
             table_row['performance'] = user2performance[current_user['id']]
             table_row['id'] = current_user['id']
             table_row['login'] = current_user['login']

@@ -40,7 +40,7 @@ def get_users_table():
     for current_item in g.team_members:
         table_row = {}
 
-        table_row['id'] = current_item.id
+        table_row['id'] = str(current_item.id)
         table_row['login'] = current_item.login
         table_row['role'] = current_item.role
         table_row['last_login'] = get_user_last_seen(current_item.last_login)
