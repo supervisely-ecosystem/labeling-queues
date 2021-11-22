@@ -15,17 +15,9 @@ from sly_fields_names import UserStatsField
 
 def init_fields(state, data):
     state['refreshingUsersStatsTable'] = False
+    state['refreshingUsersStatsTableTime'] = f.get_current_time()
+
     data['usersStatsTable'] = get_users_stats_table(state, users_table=data['usersTable'])
-
-
-def update_custom_data(field_name, data):
-    project_custom_data = f.get_project_custom_data(g.project_id)
-    current_field = project_custom_data.get(field_name, {})
-    current_field.update(data)
-
-    project_custom_data[field_name] = current_field
-
-    g.api.project.update_custom_data(g.project_id, project_custom_data)
 
 
 def init_user_stats(user_id):
@@ -41,7 +33,7 @@ def init_user_stats(user_id):
     }
 
     g.user2stats.update(user_data)
-    update_custom_data(field_name, user_data)
+    f.update_custom_data(field_name, user_data)
 
 
 def get_users_performances(users_table):
@@ -102,6 +94,7 @@ def get_users_stats_table(state, users_table):
 
         if state['annotatorsIds'].get(current_user['id'], False):
             table_row['performance'] = user2performance[current_user['id']]
+            table_row['status'] = current_user['status']
             table_row['id'] = current_user['id']
             table_row['login'] = current_user['login']
             table_row['role'] = current_user['role']
@@ -112,7 +105,7 @@ def get_users_stats_table(state, users_table):
             table_row['tags_created'] = user_stats.get(UserStatsField.TAGS_CREATED, 0)
 
             work_time_unix = user_stats.get(UserStatsField.WORK_TIME, 0)
-            table_row['work_time'] = str(datetime.timedelta(seconds=round(work_time_unix)))
+            table_row['work_time'] = f.get_datetime_by_unix(work_time_unix)
 
             if work_time_unix != 0:
                 table_row['tags_per_time'] = f"{table_row['tags_created'] / work_time_unix: .2f}"
@@ -127,6 +120,7 @@ def get_users_stats_table(state, users_table):
 @g.update_fields
 def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersStatsTable'] = False
+    fields_to_update['state.refreshingUsersStatsTableTime'] = f.get_current_time()
 
     users_table = g.api.task.get_field(g.task_id, 'data.usersTable')
     fields_to_update['data.usersStatsTable'] = get_users_stats_table(state, users_table)

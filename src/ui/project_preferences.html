@@ -7,69 +7,65 @@
 
     <div class="fflex" style="flex-direction: row; align-items: flex-start; justify-content: flex-start">
         <div class="fflex" style="flex-direction: column; align-items: flex-start; justify-content: flex-start;
-        padding: 0 9px; border-left: 2px solid rgb(76 159 248);">
+        padding: 0 9px; ">
             <div>
                 <sly-field
                         title="Overview"
                         description="general information about project"
-                        style="margin: 5px 0"
+                        style=""
                 >
-                    <sly-icon slot="icon" :options="{ color: '#4c9ef8', bgColor: '#e3f0ff', rounded: false }">
+                    <sly-icon slot="icon" :options="{ color: 'white', bgColor: '#1fa0ff', rounded: false }">
 
                         <i class="zmdi zmdi-info"></I>
                     </sly-icon>
                 </sly-field>
-                <hr style="border: 0; margin: 9px 0; border-top: 2px dashed rgba(0,0,0,.12);"/>
             </div>
 
+            <div style="border-left: 2px solid #1fa0ff; padding: 0 8px">
+                <sly-field title="" description="Input project"
+                           style="margin: 5px 0">
+                    <a slot="title" target="_blank"
+                       :href="`/projects/${data.projectInfo.id}/datasets`">{{ data.projectInfo.name }}</a>
+                    <sly-icon slot="icon" :options="{ imageUrl: `${data.projectInfo.reference_image_url}` }"/>
+                </sly-field>
 
-            <sly-field title="" description="Input project"
-                       style="margin: 5px 0">
-                <a slot="title" target="_blank"
-                   :href="`/projects/${data.projectInfo.id}/datasets`">{{ data.projectInfo.name }}</a>
-                <sly-icon slot="icon" :options="{ imageUrl: `${data.projectInfo.reference_image_url}` }"/>
-            </sly-field>
+                <div>
+                    <p style="font-size: 14px; margin: 8px 0">
+                        <b>Type</b>: {{data.projectInfo.project_type}}
+                    </p>
+                    <p style="font-size: 14px; margin: 8px 0">
+                        <b>Items Count</b>: {{data.projectInfo.items_count}}
+                    </p>
+                    <p style="font-size: 14px; margin: 8px 0">
 
-            <div>
-                <p style="font-size: 14px">
-                    <b>type</b>: {{data.projectInfo.project_type}}
-                </p>
-                <p style="font-size: 14px">
-                    <b>items count</b>: {{data.projectInfo.items_count}}
-                </p>
-                <p style="font-size: 14px">
-                    <a target="_blank" :href="`/projects/${data.projectInfo.id}/classes`">
-                        <b>available classes</b>: {{data.projectInfo.classes_count}}
-                    </a>
-                </p>
-                <p style="font-size: 14px">
-                    <a target="_blank" :href="`/projects/${data.projectInfo.id}/tags`">
-                        <b>available tags</b>: {{data.projectInfo.tags_count}}
-                    </a>
-                </p>
+                        <b>Available Classes</b>: <a target="_blank" :href="`/projects/${data.projectInfo.id}/classes`">{{data.projectInfo.classes_count}}</a>
+                    </p>
+                    <p style="font-size: 14px; margin: 8px 0">
+                        <b>Available Tags</b>: <a target="_blank" :href="`/projects/${data.projectInfo.id}/tags`">{{data.projectInfo.tags_count}}</a>
+                    </p>
+                </div>
             </div>
-
 
         </div>
 
         <div class="fflex"
              style="height: 100%; flex-direction: column; align-items: flex-start; justify-content: flex-start;
-             margin-left: 30px; padding: 0 9px; border-left: 2px solid rgb(254 167 86);">
-            <div>
+             margin-left: 30px; padding: 0 9px;">
+            <div >
                 <sly-field
                         title="Preferences"
                         description="set project preferences"
-                        style="margin: 5px 0"
+                        style=""
                 >
-                    <sly-icon slot="icon" :options="{ color: '#fd8404', bgColor: '#fff3e1', rounded: false }">
+                    <sly-icon slot="icon" :options="{ color: 'white', bgColor: '#fd8403', rounded: false }">
                         <i class="zmdi zmdi-settings"></i>
 
                     </sly-icon>
                 </sly-field>
-                <hr style="border: 0; margin: 9px 0; border-top: 2px dashed rgba(0,0,0,.12);"/>
             </div>
-            <div class="fflex" style="margin: 10px 0;
-            flex-direction: row; align-items: center; justify-content: flex-start">
+            <div class="fflex" style="margin: 5px 0; padding: 0 8px;
+            flex-direction: row; align-items: center; justify-content: flex-start;
+            border-left: 2px solid #fd8403;">
 
                 <el-switch
                         class="mr5"
@@ -77,7 +73,7 @@
                         on-text=""
                         off-text="">
                 </el-switch>
-                <p style="margin: 0 5px; font-size: 12px">
+                <p style="margin: 0 5px; font-size: 14px">
                     Add new items to queue automatically
                 </p>
             </div>

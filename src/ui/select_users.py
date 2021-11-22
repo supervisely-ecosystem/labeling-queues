@@ -4,12 +4,15 @@ import datetime
 
 import supervisely_lib as sly
 
+from sly_fields_names import UserStatusField
+
 import sly_globals as g
 import sly_functions as f
 
 
 def init_fields(state, data):
     state['refreshingUsersTable'] = False
+    state['refreshingUsersTableTime'] = f.get_current_time()
 
     data['usersTable'] = get_users_table()
 
@@ -40,6 +43,7 @@ def get_users_table():
     for current_item in g.team_members:
         table_row = {}
 
+        table_row['status'] = UserStatusField.OFFLINE
         table_row['id'] = str(current_item.id)
         table_row['login'] = current_item.login
         table_row['role'] = current_item.role
@@ -56,6 +60,7 @@ def get_users_table():
 @g.update_fields
 def refresh_users_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersTable'] = False
+    fields_to_update['state.refreshingUsersTableTime'] = f.get_current_time()
 
     newest_table = get_users_table()
     current_table = api.task.get_field(g.task_id, 'data.usersTable')

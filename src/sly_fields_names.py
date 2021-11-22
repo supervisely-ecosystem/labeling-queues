@@ -8,6 +8,12 @@ class ItemsStatusField:
     COMPLETED = 'completed'
 
 
+class UserStatusField:
+    OFFLINE = 'offline'
+    ONLINE = 'online'
+    IN_WORK = 'in work'
+
+
 class UserStatsField:
     ITEMS_ANNOTATED = "items_annotated"
     TAGS_CREATED = "tags_created"

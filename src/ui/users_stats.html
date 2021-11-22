@@ -2,7 +2,7 @@
         class="custom-sly-card-border-radius mb10"
         title="Annotators Stats"
         subtitle="statistics for every worker"
-        style="width: 100%">
+        style="width: 100%; padding-bottom: 10px">
     <div v-loading="state.refreshingUsersStatsTable" element-loading-text="refreshing table...">
         <sly-field>
             <el-table
@@ -24,20 +24,41 @@
                             {{scope.row.performance}}
                         </div>
                         <div v-if="scope.row.performance === 'low'">
-                            <i class="zmdi zmdi-circle mr5" style="color: #FFA800"></i>
+                            <i class="zmdi zmdi-circle mr5" style="color: #b65409"></i>
                             {{scope.row.performance}}
                         </div>
                         <div v-if="scope.row.performance === 'normal'">
-                            <i class="zmdi zmdi-circle mr5" style="color: #FFFF00"></i>
+                            <i class="zmdi zmdi-circle mr5" style="color: #000000"></i>
                             {{scope.row.performance}}
                         </div>
                         <div v-if="scope.row.performance === 'high'">
-                            <i class="zmdi zmdi-circle mr5" style="color: #b9ff3f"></i>
+                            <i class="zmdi zmdi-circle mr5" style="color: #628d00"></i>
                             {{scope.row.performance}}
                         </div>
                         <div v-if="scope.row.performance === 'very high'">
-                            <i class="zmdi zmdi-circle mr5" style="color: #3cb800"></i>
+                            <i class="zmdi zmdi-circle mr5" style="color: #3dc100"></i>
                             {{scope.row.performance}}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column
+
+                        prop="status"
+                        sortable
+                        label="STATUS"
+                        width="120px">
+                    <template scope="scope">
+                        <div v-if="scope.row.status === 'offline'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #8e8e8e"></i>
+                            {{scope.row.status}}
+                        </div>
+                        <div v-if="scope.row.status === 'online'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #23a000"></i>
+                            {{scope.row.status}}
+                        </div>
+                        <div v-if="scope.row.status === 'in work'">
+                            <i class="zmdi zmdi-circle mr5" style="color: #9500ff"></i>
+                            {{scope.row.status}}
                         </div>
                     </template>
                 </el-table-column>
@@ -46,13 +67,14 @@
                         prop="id"
                         sortable
                         label="USER ID"
-                        width="120px">
+                        width="110px">
                     <template scope="scope">
                         {{scope.row.id}}
                     </template>
                 </el-table-column>
                 <el-table-column
                         prop="login"
+                        width="100px"
                         sortable
                         label="LOGIN"
                 >
@@ -63,6 +85,7 @@
                 <el-table-column
                         prop="role"
                         sortable
+                        width="100px"
                         label="ROLE"
                 >
                     <template scope="scope">
@@ -70,20 +93,21 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                        width="110px"
+                        width="90px"
                         label="VIDEOS">
                     <template scope="scope">
                         {{scope.row.videos_annotated}}
                     </template>
                 </el-table-column>
                 <el-table-column
-                        width="110px"
+                        width="80px"
                         label="TAGS">
                     <template scope="scope">
                         {{scope.row.tags_created}}
                     </template>
                 </el-table-column>
                 <el-table-column
+                        width="115px"
                         label="WORK TIME">
                     <template scope="scope">
                         {{scope.row.work_time}}
@@ -101,17 +125,27 @@
             </el-table>
         </sly-field>
 
+
         <div class="fflex"
              style="flex-direction: row; justify-content: flex-end; align-items: center">
-            <div>
-                <el-button type="warning" class="regular mt10" :plain="true"
-                           @click="state.refreshingUsersStatsTable=true; command('refresh_users_stats_table');">
-                    <i class="zmdi zmdi-refresh mr5"></i>Refresh table
-                </el-button>
+            <div class="fflex" style="justify-content: center; align-items: flex-end; flex-direction: row">
+                <div class="fflex" style="justify-content: center; flex-direction: column">
 
+
+                    <el-button style="margin: 2px 3px"
+                               size="small"
+                               type="warning" class="regular mt10" :plain="true"
+                               @click="state.refreshingUsersStatsTable=true; command('refresh_users_stats_table');">
+                        <i class="zmdi zmdi-refresh mr5"></i>refresh table
+
+                    </el-button>
+                     <p style="font-size: 12px; color: #5a6772; margin: 3px 0">
+                        last update: <b style="color: #453e00;">{{state.refreshingUsersStatsTableTime}}</b></p>
+
+
+
+                </div>
             </div>
-
-
         </div>
     </div>
 </sly-card>
