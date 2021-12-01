@@ -1,16 +1,31 @@
 import datetime
 from string import Formatter
 
+import supervisely_lib as sly
+
 import sly_globals as g
 
 from sly_fields_names import ItemsStatusField, UserStatusField
 
 
+def add_technical_tag_to_project_meta(tag_name):
+    project_meta = sly.ProjectMeta.from_json(g.api.project.get_meta(g.project_id))
+    technical_tag = sly.TagMeta(tag_name, sly.TagValueType.ANY_STRING)
+    tags = sly.TagMetaCollection([technical_tag])
+    meta_with_tag = sly.ProjectMeta(tag_metas=tags)
+
+    updated_meta = meta_with_tag.merge(project_meta)
+    g.api.project.update_meta(g.project_id, updated_meta.to_json())
+
+
 def get_status_tag_id_of_project():
+    add_technical_tag_to_project_meta(ItemsStatusField.TAG_NAME)
+    g.project_meta = sly.ProjectMeta.from_json(g.api.project.get_meta(g.project_id))
     for project_tag in g.project_meta.tag_metas.to_json():
         if project_tag.get('name', '') == ItemsStatusField.TAG_NAME:
-            return project_tag.get('id', -1)
-    return -1
+            return project_tag.get('id', None)
+
+
 
 
 def get_item_status_by_info(item_info):

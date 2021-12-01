@@ -47,7 +47,7 @@ project_custom_data = f.get_project_custom_data(project_id)
 
 task2item = {}  # item_id -> task_id
 item2stats = {}  # item_id -> his stats
-user2stats = project_custom_data.get('users2stats', {})  # user_id -> his stats
+user2stats = project_custom_data.get('user2stats', {})  # user_id -> his stats
 
 labeling_queue = queue.Queue(maxsize=int(1e5))
 reviewing_queue = queue.Queue(maxsize=int(1e5))

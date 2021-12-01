@@ -55,7 +55,8 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
             'items_for_review_count': len(list(g.reviewing_queue.queue)),
             'items_for_annotation_count': len(list(g.labeling_queue.queue)),
             'can_annotate': annotatorsIds.get(str(user_id), False),
-            'can_review': reviewersIds.get(str(user_id), False)
+            'can_review': reviewersIds.get(str(user_id), False),
+            'user_stats': g.user2stats.get(str(user_id))
         }
 
         if g.connected_users.get(f'{user_id}', None) is None:  # if user not connected before
@@ -88,6 +89,29 @@ def get_queue_by_user_mode(queue_name):
         return g.labeling_queue
     elif queue_name == 'reviewer':
         return g.labeling_queue
+
+
+@g.my_app.callback("update_stats")
+@sly.timeit
+@g.update_fields
+# @g.my_app.ignore_errors_and_show_dialog_window()
+def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
+    request_id = context["request_id"]
+
+    user_id = state['userId']
+    task_id = state['taskId']
+
+    item_id = g.task2item.get(task_id, None)
+    if item_id is not None:
+
+        f.update_item_status(item_id=item_id, fields=state['item_fields'])
+        f.update_table('usersTable', user_id, state['user_fields'])
+
+        g.user2stats[str(user_id)].update(state['user_fields'])  # user2stats is old needs to remove
+        g.task2item[task_id] = item_id
+
+    queue_stats.update_tables(fields_to_update)
+    g.my_app.send_response(request_id, data={'status': 'done'})
 
 
 @g.my_app.callback("get_item")
@@ -127,6 +151,7 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
 #  @TODO: publish update_fields decorator
 #  @TODO: get user_id from request
 #  @TODO: admin nickname from env
+#  @TODO: preferences func
 
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

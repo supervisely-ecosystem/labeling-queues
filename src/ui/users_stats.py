@@ -27,6 +27,7 @@ def init_user_stats(user_id):
         f"{user_id}":
             {
                 UserStatsField.ITEMS_ANNOTATED: 0,
+                UserStatsField.FRAMES_ANNOTATED: 0,
                 UserStatsField.TAGS_CREATED: 0,
                 UserStatsField.WORK_TIME: 0
             }
@@ -102,6 +103,7 @@ def get_users_stats_table(state, users_table):
             user_stats = g.user2stats.get(current_user['id'], {})
 
             table_row['videos_annotated'] = user_stats.get(UserStatsField.ITEMS_ANNOTATED, 0)
+            table_row['frames_annotated'] = user_stats.get(UserStatsField.FRAMES_ANNOTATED, 0)
             table_row['tags_created'] = user_stats.get(UserStatsField.TAGS_CREATED, 0)
 
             work_time_unix = user_stats.get(UserStatsField.WORK_TIME, 0)
