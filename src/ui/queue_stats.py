@@ -50,9 +50,9 @@ def get_table_by_items_status(items_status, fields):
 
 def get_table_fields_by_status(items_status):
     if items_status == ItemsStatusField.NEW:
-        return ['item_id', 'item_name', 'duration', 'worker_login', 'item_work_time']
+        return ['item_id', 'item_name', 'duration', 'worker_login', 'work_time']
     elif items_status == ItemsStatusField.ANNOTATING:
-        return ['item_id', 'item_name', 'duration', 'worker_login', 'item_work_time']  # BETA
+        return ['item_id', 'item_name', 'duration', 'worker_login', 'work_time']
     elif items_status == ItemsStatusField.ANNOTATED:
         return ['item_id', 'item_name', 'duration', 'worker_login', 'item_work_time']  # BETA
     elif items_status == ItemsStatusField.REVIEWING:

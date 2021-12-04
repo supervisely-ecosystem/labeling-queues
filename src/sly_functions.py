@@ -8,38 +8,39 @@ import sly_globals as g
 from sly_fields_names import ItemsStatusField, UserStatusField
 
 
-def add_technical_tag_to_project_meta(tag_name):
-    project_meta = sly.ProjectMeta.from_json(g.api.project.get_meta(g.project_id))
-    technical_tag = sly.TagMeta(tag_name, sly.TagValueType.ANY_STRING)
-    tags = sly.TagMetaCollection([technical_tag])
-    meta_with_tag = sly.ProjectMeta(tag_metas=tags)
+def init_project_items_info(project_id):
+    datasets_list = g.api.dataset.get_list(project_id)
 
-    updated_meta = meta_with_tag.merge(project_meta)
-    g.api.project.update_meta(g.project_id, updated_meta.to_json())
+    for current_dataset in datasets_list:
+        items_list = g.api.video.get_list(current_dataset.id)
+
+        for current_item in items_list:
+            table_row = {
+                'status': ItemsStatusField.NEW,
+                'item_id': current_item.id,
+                'item_name': current_item.name,
+                'dataset': current_dataset.name,
+                'item_frames': current_item.frames_count,
+                'duration': get_item_duration(current_item),
+                'work_time': get_datetime_by_unix(0)
+            }
+
+            existing_fields = g.item2stats.get(f"{current_item.id}", {})
+            table_row.update(existing_fields)  # updating by cached stats
+
+            table_row.update({'status': ItemsStatusField.NEW})  # DEBUG
+            g.item2stats[f'{current_item.id}'] = table_row
+
+    update_custom_data('item2stats', g.item2stats)
 
 
-def get_status_tag_id_of_project():
-    add_technical_tag_to_project_meta(ItemsStatusField.TAG_NAME)
-    g.project_meta = sly.ProjectMeta.from_json(g.api.project.get_meta(g.project_id))
-    for project_tag in g.project_meta.tag_metas.to_json():
-        if project_tag.get('name', '') == ItemsStatusField.TAG_NAME:
-            return project_tag.get('id', None)
+def get_items_ids_by_status(status):
+    items_with_status = []
+    for item in g.item2stats.values():
+        if item['status'] == status:
+            items_with_status.append(item['item_id'])
 
-
-
-
-def get_item_status_by_info(item_info):
-    item_tags = item_info.tags
-    status_tag_id = get_status_tag_id_of_project()
-
-    for item_tag in item_tags:
-        if item_tag.get('tagId', -1) == status_tag_id:
-            return item_tag.get('value', 'err')
-
-    g.api.video.tag.add_tag(project_meta_tag_id=status_tag_id, video_id=item_info.id,
-                            value=ItemsStatusField.NEW)
-
-    return ItemsStatusField.NEW
+    return items_with_status
 
 
 def strfdelta(tdelta, fmt):
@@ -59,27 +60,6 @@ def strfdelta(tdelta, fmt):
 def get_datetime_by_unix(unix_time_delta):
     delta_obj = datetime.timedelta(seconds=round(unix_time_delta))
     return strfdelta(delta_obj, "{H:02}:{M:02}:{S:02}")
-
-
-def get_project_items_info(project_id):
-    datasets_list = g.api.dataset.get_list(project_id)
-
-    for current_dataset in datasets_list:
-        items_list = g.api.video.get_list(current_dataset.id)
-
-        for current_item in items_list:
-            table_row = {}
-
-            table_row['status'] = get_item_status_by_info(current_item)
-            table_row['item_id'] = current_item.id
-            table_row['item_name'] = current_item.name
-            table_row['dataset'] = current_dataset.name
-            table_row['item_frames'] = current_item.frames_count
-            table_row['duration'] = get_item_duration(current_item)
-
-            table_row['item_work_time'] = get_datetime_by_unix(0)
-
-            g.item2stats[current_item.id] = table_row
 
 
 def get_project_custom_data(project_id):
@@ -127,8 +107,14 @@ def get_user_field(user_id, field_name):
     return None
 
 
-def update_item_status(item_id, fields):
-    g.item2stats[item_id].update(fields)
+def update_item_stats(item_id, fields):
+    g.item2stats[f'{item_id}'].update(fields)  # update locally
+    update_custom_data(field_name='item2stats', data={f"{item_id}": fields})  # update remotely
+
+
+def update_user_stats(user_id, fields):
+    g.user2stats[f'{user_id}'].update(fields)  # update locally
+    update_custom_data(field_name='user2stats', data={f"{user_id}": fields})  # update remotely
 
 
 def get_user_login_by_id(user_id):
@@ -153,10 +139,13 @@ def session_is_online(task_id):
 def update_custom_data(field_name, data):
     project_custom_data = get_project_custom_data(g.project_id)
     current_field = project_custom_data.get(field_name, {})
-    current_field.update(data)
+
+    for new_key, new_value in data.items():
+        old_value = current_field.get(new_key, {})
+        old_value.update(new_value)
+        current_field[new_key] = old_value
 
     project_custom_data[field_name] = current_field
-
     g.api.project.update_custom_data(g.project_id, project_custom_data)
 
 
@@ -173,3 +162,10 @@ def update_table(table_name, item_id, fields_to_update):
 
 def get_current_time():
     return str(datetime.datetime.now().strftime("%H:%M:%S"))
+
+
+def get_queue_by_user_mode(queue_name):
+    if queue_name == 'annotator':
+        return g.labeling_queue
+    elif queue_name == 'reviewer':
+        return g.labeling_queue

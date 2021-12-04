@@ -10,7 +10,7 @@ import supervisely_lib as sly
 import sly_globals as g
 import sly_functions as f
 
-from sly_fields_names import UserStatsField
+from sly_fields_names import UserStatsField, UserStatusField
 
 
 def init_fields(state, data):
@@ -21,20 +21,19 @@ def init_fields(state, data):
 
 
 def init_user_stats(user_id):
-    field_name = 'user2stats'
-
     user_data = {
-        f"{user_id}":
-            {
-                UserStatsField.ITEMS_ANNOTATED: 0,
-                UserStatsField.FRAMES_ANNOTATED: 0,
-                UserStatsField.TAGS_CREATED: 0,
-                UserStatsField.WORK_TIME: 0
-            }
+
+        UserStatsField.ITEMS_ANNOTATED: 0,
+        UserStatsField.FRAMES_ANNOTATED: 0,
+        UserStatsField.TAGS_CREATED: 0,
+        UserStatsField.WORK_TIME: 0
+
     }
 
-    g.user2stats.update(user_data)
-    f.update_custom_data(field_name, user_data)
+    existing_fields = g.user2stats.get(f"{user_id}", {})
+    user_data.update(existing_fields)  # updating by cached stats
+
+    f.update_user_stats(user_id, user_data)
 
 
 def get_users_performances(users_table):
@@ -84,6 +83,15 @@ def get_users_performances(users_table):
     return user2performance
 
 
+def get_user_status_by_id(user_id):
+    task_id = g.connected_users.get(f'{user_id}', None)
+
+    if task_id is not None:
+        f.session_is_online(task_id)
+    else:
+        return UserStatusField.OFFLINE
+
+
 def get_users_stats_table(state, users_table):
     table = []
 
@@ -92,27 +100,26 @@ def get_users_stats_table(state, users_table):
     for current_user in users_table:
         table_row = {}
         current_user['id'] = str(current_user['id'])
+        user_local_stats = g.user2stats.get(current_user['id'], {})  # fill additional fields
 
-        if state['annotatorsIds'].get(current_user['id'], False):
+        if state['annotatorsIds'].get(current_user['id'], False):  # ANNOTATORS STATS
             table_row['performance'] = user2performance[current_user['id']]
-            table_row['status'] = current_user['status']
-            table_row['id'] = current_user['id']
-            table_row['login'] = current_user['login']
-            table_row['role'] = current_user['role']
 
-            user_stats = g.user2stats.get(current_user['id'], {})
+            for current_field in ['status', 'id', 'login', 'role']:  # fill general fields
+                table_row[current_field] = current_user[current_field]
 
-            table_row['videos_annotated'] = user_stats.get(UserStatsField.ITEMS_ANNOTATED, 0)
-            table_row['frames_annotated'] = user_stats.get(UserStatsField.FRAMES_ANNOTATED, 0)
-            table_row['tags_created'] = user_stats.get(UserStatsField.TAGS_CREATED, 0)
+            for additional_field in [UserStatsField.ITEMS_ANNOTATED, UserStatsField.FRAMES_ANNOTATED,
+                                     UserStatsField.TAGS_CREATED]:
+                table_row[additional_field] = user_local_stats.get(additional_field, 0)
 
-            work_time_unix = user_stats.get(UserStatsField.WORK_TIME, 0)
+            work_time_unix = user_local_stats.get(UserStatsField.WORK_TIME, 0)
             table_row['work_time'] = f.get_datetime_by_unix(work_time_unix)
 
             if work_time_unix != 0:
-                table_row['tags_per_time'] = f"{table_row['tags_created'] / work_time_unix: .2f}"
+                table_row['frames_per_time'] = f"{table_row[UserStatsField.FRAMES_ANNOTATED] / work_time_unix: .2f}"
             else:
-                table_row['tags_per_time'] = "-"
+                table_row['frames_per_time'] = "-"
+
             table.append(table_row)
     return table
 

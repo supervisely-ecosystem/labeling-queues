@@ -1,3 +1,5 @@
+import time
+
 import supervisely_lib as sly
 import ui as ui
 
@@ -10,13 +12,10 @@ from sly_fields_names import ItemsStatusField, UserStatusField
 
 
 def fill_queues_by_project(project_id):
-    f.get_project_items_info(project_id)
+    f.init_project_items_info(project_id)
 
-    items_to_put = list(g.item2stats.keys())
-    [g.labeling_queue.put(query) for query in items_to_put]
-
-    for item_to_put_id in items_to_put:
-        f.update_item_status(item_to_put_id, {'status': ItemsStatusField.NEW})
+    [g.labeling_queue.put(item) for item in f.get_items_ids_by_status(ItemsStatusField.NEW)]
+    [g.reviewing_queue.put(item) for item in f.get_items_ids_by_status(ItemsStatusField.ANNOTATED)]
 
 
 def main():
@@ -51,7 +50,7 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         annotatorsIds, reviewersIds = users_statuses['state.annotatorsIds'], users_statuses['state.reviewersIds']
 
         additional_fields = {
-            'admin_nickname': 'ADMIN',  # @TODO: real nickname
+            'admin_nickname': f'{g.admin_nickname}',
             'items_for_review_count': len(list(g.reviewing_queue.queue)),
             'items_for_annotation_count': len(list(g.labeling_queue.queue)),
             'can_annotate': annotatorsIds.get(str(user_id), False),
@@ -64,7 +63,7 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         else:
             prev_task_id = g.connected_users[f'{user_id}']
             # if session_is_online(prev_task_id): # DEBUG
-            if not True:                                       # if preview task is alive
+            if not True:  # if preview task is alive
                 return_data = {'rc': -1,
                                'taskId': prev_task_id}
             else:
@@ -84,11 +83,47 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         sly.logger.warn(ex)
 
 
-def get_queue_by_user_mode(queue_name):
-    if queue_name == 'annotator':
-        return g.labeling_queue
-    elif queue_name == 'reviewer':
-        return g.labeling_queue
+def get_returned_item_status(user_mode, review_needed):
+    item_status = ItemsStatusField.COMPLETED
+
+    if user_mode == 'annotator' and review_needed:
+        item_status = ItemsStatusField.ANNOTATED
+
+    elif user_mode == 'reviewer':
+        item_status = ItemsStatusField.COMPLETED
+
+    return item_status
+
+
+@g.my_app.callback("return_item")
+@sly.timeit
+@g.update_fields
+# @g.my_app.ignore_errors_and_show_dialog_window()
+def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
+    request_id = context["request_id"]
+
+    user_id = state['userId']
+    task_id = state['taskId']
+    user_mode = state['mode']
+
+    reviewers_ids = g.api.task.get_field(g.task_id, 'state.reviewersIds')
+    review_needed = True in list(reviewers_ids.values())
+
+    item_id = g.task2item.get(task_id, None)
+    if item_id is not None:
+        new_item_status = get_returned_item_status(user_mode, review_needed)
+        if new_item_status == ItemsStatusField.ANNOTATED:
+            g.reviewing_queue.put(item_id)
+
+        f.update_item_stats(item_id=item_id, fields={'status': new_item_status})
+        f.update_user_stats(user_id=user_id, fields={'status': UserStatusField.ONLINE})
+
+        g.task2item.pop(task_id)
+
+    f.update_table('usersTable', user_id, {'status': UserStatusField.ONLINE})
+    queue_stats.update_tables(fields_to_update)
+
+    g.my_app.send_response(request_id, data={'status': 'done'})
 
 
 @g.my_app.callback("update_stats")
@@ -103,14 +138,18 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
 
     item_id = g.task2item.get(task_id, None)
     if item_id is not None:
+        item_fields = {
+            'work_time': f.get_datetime_by_unix(time.time() - g.item2stats[f'{item_id}']['work_started_unix'])
+        }
 
-        f.update_item_status(item_id=item_id, fields=state['item_fields'])
-        f.update_table('usersTable', user_id, state['user_fields'])
+        state['item_fields'].update(item_fields)
 
-        g.user2stats[str(user_id)].update(state['user_fields'])  # user2stats is old needs to remove
-        g.task2item[task_id] = item_id
+        f.update_item_stats(item_id=item_id, fields=state['item_fields'])
+        f.update_user_stats(user_id=user_id, fields=state['user_fields'])
 
+    f.update_table('usersTable', user_id, state['user_fields'])
     queue_stats.update_tables(fields_to_update)
+
     g.my_app.send_response(request_id, data={'status': 'done'})
 
 
@@ -124,7 +163,7 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
     task_id = state['taskId']
     user_mode = state['mode']
 
-    current_queue = get_queue_by_user_mode(user_mode)
+    current_queue = f.get_queue_by_user_mode(user_mode)
     if f.user_have_rights(user_id, task_id, user_mode):
 
         item_id = g.task2item.get(task_id, None)
@@ -134,9 +173,11 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
             item_fields = {
                 'status': ItemsStatusField.ANNOTATING if user_mode == 'annotator' else ItemsStatusField.REVIEWING,
                 'worker_id': f'{user_id}',
-                'worker_login': f.get_user_login_by_id(user_id)
+                'worker_login': f.get_user_login_by_id(user_id),
+                'work_started_unix': g.item2stats[f'{item_id}']['work_started_unix'] if
+                g.item2stats[f'{item_id}'].get('work_started_unix', None) is not None else time.time()
             }
-            f.update_item_status(item_id=item_id, fields=item_fields)
+            f.update_item_stats(item_id=item_id, fields=item_fields)
 
             g.task2item[task_id] = item_id
 
@@ -149,9 +190,12 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
 
 #  @TODO: publish API method video.add_tag
 #  @TODO: publish update_fields decorator
-#  @TODO: get user_id from request
-#  @TODO: admin nickname from env
-#  @TODO: preferences func
+
+#  @TODO: get user_id from request — every session has info which task_id get info of owner
+#  @TODO: connected sessions hooker — by myself
+#  @TODO: items link to project — api.image.url(TEAM_ID, WORKSPACE_ID, project.id, dataset.id, info.id), info.name)
+#  @TODO: additional items stats —
+
 
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

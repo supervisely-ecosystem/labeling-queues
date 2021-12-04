@@ -23,8 +23,11 @@ task_id = my_app.task_id
 team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
 project_id = int(os.environ['modal.state.slyProjectId'])
+admin_user_id = int((os.environ['context.userId']))
+
 
 team_members = api.user.get_team_members(team_id)
+admin_nickname = f.get_user_login_by_id(admin_user_id)
 
 project_info = api.project.get_info_by_id(project_id)
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))
@@ -46,7 +49,7 @@ annotation_controller_status_tag_name = 'annotation_controller_status_tag'
 project_custom_data = f.get_project_custom_data(project_id)
 
 task2item = {}  # item_id -> task_id
-item2stats = {}  # item_id -> his stats
+item2stats = project_custom_data.get('item2stats', {})  # item_id -> his stats
 user2stats = project_custom_data.get('user2stats', {})  # user_id -> his stats
 
 labeling_queue = queue.Queue(maxsize=int(1e5))

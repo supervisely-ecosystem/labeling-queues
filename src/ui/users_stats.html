@@ -8,7 +8,7 @@
             <el-table
                     :data="data.usersStatsTable"
                     border
-                    class="disable_overflow_by_x_for_table"
+                    class="disable_overflow_by_x_for_table table-header-font-size"
                     style="width: 100%"
                     max-height="250">
 
@@ -17,7 +17,7 @@
                         prop="performance"
                         sortable
                         label="PERFORMANCE"
-                        width="160px">
+                        width="146px">
                     <template scope="scope">
                         <div v-if="scope.row.performance === 'very low'">
                             <i class="zmdi zmdi-circle mr5" style="color: #FF2400"></i>
@@ -46,7 +46,7 @@
                         prop="status"
                         sortable
                         label="STATUS"
-                        width="120px">
+                        width="116px">
                     <template scope="scope">
                         <div v-if="scope.row.status === 'offline'">
                             <i class="zmdi zmdi-circle mr5" style="color: #8e8e8e"></i>
@@ -67,14 +67,14 @@
                         prop="id"
                         sortable
                         label="USER ID"
-                        width="110px">
+                        width="102px">
                     <template scope="scope">
                         {{scope.row.id}}
                     </template>
                 </el-table-column>
                 <el-table-column
                         prop="login"
-                        width="100px"
+                        width="94px"
                         sortable
                         label="LOGIN"
                 >
@@ -96,18 +96,25 @@
                         width="90px"
                         label="VIDEOS">
                     <template scope="scope">
-                        {{scope.row.videos_annotated}}
+                        {{scope.row.items_annotated}}
                     </template>
                 </el-table-column>
                 <el-table-column
-                        width="80px"
+                        width="90px"
+                        label="FRAMES">
+                    <template scope="scope">
+                        {{scope.row.frames_annotated}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        width="76px"
                         label="TAGS">
                     <template scope="scope">
                         {{scope.row.tags_created}}
                     </template>
                 </el-table-column>
                 <el-table-column
-                        width="115px"
+                        width="102px"
                         label="WORK TIME">
                     <template scope="scope">
                         {{scope.row.work_time}}
@@ -115,10 +122,10 @@
                 </el-table-column>
                 <el-table-column
                         sortable
-                        prop="tags_per_time"
-                        label="TAGS / TIME">
+                        prop="frames_per_time"
+                        label="FRAMES / TIME">
                     <template scope="scope">
-                        {{scope.row.tags_per_time}}
+                        {{scope.row.frames_per_time}}
                     </template>
                 </el-table-column>
 
