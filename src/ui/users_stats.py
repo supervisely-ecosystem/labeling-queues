@@ -5,6 +5,7 @@ import datetime
 
 import numpy as np
 
+import queue_stats
 import supervisely_lib as sly
 
 import sly_globals as g
@@ -84,7 +85,7 @@ def get_users_performances(users_table):
 
 
 def get_user_status_by_id(user_id):
-    task_id = g.connected_users.get(f'{user_id}', None)
+    task_id = g.user2task.get(f'{user_id}', None)
 
     if task_id is not None:
         f.session_is_online(task_id)
@@ -104,8 +105,9 @@ def get_users_stats_table(state, users_table):
 
         if state['annotatorsIds'].get(current_user['id'], False):  # ANNOTATORS STATS
             table_row['performance'] = user2performance[current_user['id']]
+            table_row['status'] = user_local_stats.get('status', UserStatusField.OFFLINE)
 
-            for current_field in ['status', 'id', 'login', 'role']:  # fill general fields
+            for current_field in ['id', 'login', 'role']:  # fill general fields
                 table_row[current_field] = current_user[current_field]
 
             for additional_field in [UserStatsField.ITEMS_ANNOTATED, UserStatsField.FRAMES_ANNOTATED,
@@ -122,6 +124,32 @@ def get_users_stats_table(state, users_table):
 
             table.append(table_row)
     return table
+
+
+@g.my_app.periodic(seconds=5)
+@g.update_fields
+def recheck_user_statuses(api, task_id, fields_to_update):
+    sly.logger.info('function called')
+    for user_id, user_stats in g.user2stats.items():
+
+        user_task_id = g.user2task.get(f'{user_id}', None)
+
+        if user_task_id is not None:
+            if not f.session_is_online(user_task_id):
+                updated_user_stats['status'] = UserStatusField.OFFLINE
+                updated_user_stats['task_id'] = None
+
+                g.user2task.pop(f'{user_id}')
+                item_id = g.task2item.pop(user_task_id)
+
+                f.return_item_to_queue(item_id)
+                queue_stats.update_tables(fields_to_update)
+
+
+        else:
+            updated_user_stats['status'] = UserStatusField.OFFLINE
+
+        g.user2stats[f'{user_id}'].update(updated_user_stats)
 
 
 @g.my_app.callback("refresh_users_stats_table")

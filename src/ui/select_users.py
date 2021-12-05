@@ -52,6 +52,7 @@ def get_users_table():
         table_row['can_review'] = current_item.role == 'reviewer'
 
         table.append(table_row)
+
     return table
 
 

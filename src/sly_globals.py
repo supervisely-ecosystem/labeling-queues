@@ -48,6 +48,7 @@ annotation_controller_status_tag_name = 'annotation_controller_status_tag'
 
 project_custom_data = f.get_project_custom_data(project_id)
 
+user2task = {}
 task2item = {}  # item_id -> task_id
 item2stats = project_custom_data.get('item2stats', {})  # item_id -> his stats
 user2stats = project_custom_data.get('user2stats', {})  # user_id -> his stats
@@ -55,7 +56,6 @@ user2stats = project_custom_data.get('user2stats', {})  # user_id -> his stats
 labeling_queue = queue.Queue(maxsize=int(1e5))
 reviewing_queue = queue.Queue(maxsize=int(1e5))
 
-connected_users = {}
 
 
 def update_fields(func):

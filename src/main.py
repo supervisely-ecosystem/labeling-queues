@@ -1,3 +1,4 @@
+import datetime
 import time
 
 import supervisely_lib as sly
@@ -13,6 +14,7 @@ from sly_fields_names import ItemsStatusField, UserStatusField
 
 def fill_queues_by_project(project_id):
     f.init_project_items_info(project_id)
+    f.init_users_stats_info(project_id)
 
     [g.labeling_queue.put(item) for item in f.get_items_ids_by_status(ItemsStatusField.NEW)]
     [g.reviewing_queue.put(item) for item in f.get_items_ids_by_status(ItemsStatusField.ANNOTATED)]
@@ -34,6 +36,8 @@ def main():
     ui.init(data=data, state=state)  # init data for UI widgets
 
     g.my_app.run(data=data, state=state)
+
+
 
 
 @g.my_app.callback("connect_user")
@@ -58,11 +62,11 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
             'user_stats': g.user2stats.get(str(user_id))
         }
 
-        if g.connected_users.get(f'{user_id}', None) is None:  # if user not connected before
+        if g.user2task.get(f'{user_id}', None) is None:  # if user not connected before
             return_data = {'rc': 0}
         else:
-            prev_task_id = g.connected_users[f'{user_id}']
-            # if session_is_online(prev_task_id): # DEBUG
+            prev_task_id = g.user2task[f'{user_id}']
+            # if f.session_is_online(prev_task_id): # DEBUG
             if not True:  # if preview task is alive
                 return_data = {'rc': -1,
                                'taskId': prev_task_id}
@@ -74,7 +78,7 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
                     g.task2item[task_id] = item_id
 
         if return_data['rc'] == 0:
-            g.connected_users[f'{user_id}'] = task_id
+            g.user2task[f'{user_id}'] = task_id
             return_data.update(additional_fields)
             f.update_table('usersTable', user_id, {'status': UserStatusField.ONLINE})
 
@@ -191,8 +195,8 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
 #  @TODO: publish API method video.add_tag
 #  @TODO: publish update_fields decorator
 
-#  @TODO: get user_id from request — every session has info which task_id get info of owner
 #  @TODO: connected sessions hooker — by myself
+#  @TODO: get user_id from request — every session has info which task_id get info of owner
 #  @TODO: items link to project — api.image.url(TEAM_ID, WORKSPACE_ID, project.id, dataset.id, info.id), info.name)
 #  @TODO: additional items stats —
 

@@ -90,7 +90,7 @@ def user_have_rights(user_id, task_id, user_mode):
     else:
         return False
 
-    if g.connected_users.get(str(user_id)) == task_id \
+    if g.user2task.get(str(user_id)) == task_id \
             and get_user_field(user_id, 'status') == UserStatusField.ONLINE:
         return True
 
@@ -127,7 +127,7 @@ def get_user_login_by_id(user_id):
 
 def session_is_online(task_id):
     try:
-        response = g.api.task.send_request(task_id, "is_online", data={}, timeout=3)
+        response = g.api.task.send_request(task_id, "is_online", data={}, timeout=5)
         if response is not None:
             return True
         else:
@@ -169,3 +169,25 @@ def get_queue_by_user_mode(queue_name):
         return g.labeling_queue
     elif queue_name == 'reviewer':
         return g.labeling_queue
+
+
+def return_item_to_queue(item_id):
+    item_to_return = g.item2stats[f'{item_id}']
+
+    if item_to_return['status'] == ItemsStatusField.ANNOTATING:
+        g.labeling_queue.put(item_to_return['item_id'])
+        item_to_return['status'] = ItemsStatusField.NEW
+
+        item_to_return['worker_id'] = None  # may be in another format
+        item_to_return['worker_login'] = None
+
+    elif item_to_return['status'] == ItemsStatusField.REVIEWING:
+        g.reviewing_queue.put(item_to_return['item_id'])
+        item_to_return['status'] = ItemsStatusField.ANNOTATED
+
+        item_to_return['worker_id'] = None  # may be in another format
+        item_to_return['worker_login'] = None
+
+    g.item2stats[f'{item_id}'] = item_to_return
+
+
