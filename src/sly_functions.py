@@ -1,14 +1,15 @@
 import datetime
+import time
 from string import Formatter
 
 import supervisely_lib as sly
 
 import sly_globals as g
 
-from sly_fields_names import ItemsStatusField, UserStatusField
+from sly_fields_names import ItemsStatusField, UserStatusField, UserStatsField
 
 
-def init_project_items_info(project_id):
+def update_project_items_info(project_id):
     datasets_list = g.api.dataset.get_list(project_id)
 
     for current_dataset in datasets_list:
@@ -32,6 +33,49 @@ def init_project_items_info(project_id):
             g.item2stats[f'{current_item.id}'] = table_row
 
     update_custom_data('item2stats', g.item2stats)
+
+
+def update_project_users_info(team_id):
+    g.team_members = g.api.user.get_team_members(team_id)
+
+    # for i in range(100):  # DEBUG
+    for current_item in g.team_members:
+        table_row = {'status': UserStatusField.OFFLINE,
+                     'id': f'{current_item.id}',
+                     'login': current_item.login,
+                     'role': current_item.role,
+                     'last_login': get_user_last_seen(current_item.last_login),
+                     'can_annotate': current_item.role == 'annotator',
+                     'can_review': current_item.role == 'reviewer',
+                     'performance': 'normal',
+
+                     UserStatsField.WORK_TIME_UNIX: 0,
+                     UserStatsField.WORK_TIME: get_datetime_by_unix(0),
+                     UserStatsField.FRAMES_ANNOTATED: 0,
+                     UserStatsField.ITEMS_ANNOTATED: 0,
+                     UserStatsField.TAGS_CREATED: 0,
+                     'frames_per_time': '-'}
+
+        existing_fields = g.user2stats.get(f"{current_item.id}", {})
+        table_row.update(existing_fields)  # updating by cached stats
+
+        g.user2stats[f'{current_item.id}'] = table_row
+
+    update_custom_data('user2stats', g.user2stats)
+
+
+def get_user_last_seen(datetime_str):
+    d = datetime.datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S.%f%z')
+
+    last_seen_unix = time.mktime(time.gmtime()) - time.mktime(d.timetuple())
+    last_seen_datetime = datetime.timedelta(seconds=round(last_seen_unix))
+
+    if last_seen_datetime.days == 0:
+        return f"{last_seen_datetime} ago"
+    elif 30 > last_seen_datetime.days > 0:
+        return f"{last_seen_datetime.days} days ago"
+    else:
+        return "long time ago"
 
 
 def get_items_ids_by_status(status):
@@ -91,20 +135,12 @@ def user_have_rights(user_id, task_id, user_mode):
         return False
 
     if g.user2task.get(str(user_id)) == task_id \
-            and get_user_field(user_id, 'status') == UserStatusField.ONLINE:
+            and g.user2stats[f'{user_id}']['status'] == UserStatusField.ONLINE:
         return True
 
     return False
 
 
-def get_user_field(user_id, field_name):
-    users_table = g.api.task.get_field(g.task_id, 'data.usersTable')
-
-    for row in users_table:
-        if str(row.get('id')) == str(user_id):
-            return row.get(field_name, None)
-
-    return None
 
 
 def update_item_stats(item_id, fields):
@@ -148,16 +184,16 @@ def update_custom_data(field_name, data):
     project_custom_data[field_name] = current_field
     g.api.project.update_custom_data(g.project_id, project_custom_data)
 
-
-def update_table(table_name, item_id, fields_to_update):
-    table = g.api.task.get_field(g.task_id, f'data.{table_name}')
-    item_id = str(item_id)
-
-    for index, row in enumerate(table):
-        if str(row.get('id')) == item_id:
-            table[index].update(fields_to_update)
-
-    g.api.task.set_field(g.task_id, f'data.{table_name}', table)
+# legacy
+# def update_table(table_name, item_id, fields_to_update):
+#     table = g.api.task.get_field(g.task_id, f'data.{table_name}')
+#     item_id = str(item_id)
+#
+#     for index, row in enumerate(table):
+#         if str(row.get('id')) == item_id:
+#             table[index].update(fields_to_update)
+#
+#     g.api.task.set_field(g.task_id, f'data.{table_name}', table)
 
 
 def get_current_time():
@@ -191,3 +227,17 @@ def return_item_to_queue(item_id):
     g.item2stats[f'{item_id}'] = item_to_return
 
 
+def fill_queues_by_project():
+    [g.labeling_queue.put(item) for item in get_items_ids_by_status(ItemsStatusField.NEW)]
+    [g.reviewing_queue.put(item) for item in get_items_ids_by_status(ItemsStatusField.ANNOTATED)]
+
+
+def get_users_table():
+    table = []
+
+    update_project_users_info(g.team_id)
+
+    for table_row in g.user2stats.values():
+        table.append(table_row)
+
+    return table

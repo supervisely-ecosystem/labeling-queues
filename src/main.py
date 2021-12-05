@@ -12,12 +12,6 @@ import queue_stats
 from sly_fields_names import ItemsStatusField, UserStatusField
 
 
-def fill_queues_by_project(project_id):
-    f.init_project_items_info(project_id)
-    f.init_users_stats_info(project_id)
-
-    [g.labeling_queue.put(item) for item in f.get_items_ids_by_status(ItemsStatusField.NEW)]
-    [g.reviewing_queue.put(item) for item in f.get_items_ids_by_status(ItemsStatusField.ANNOTATED)]
 
 
 def main():
@@ -32,12 +26,13 @@ def main():
     data = {}
     state = {}
 
-    fill_queues_by_project(g.project_id)
+    f.update_project_items_info(g.project_id)
+    f.update_project_users_info(g.team_id)
+    f.fill_queues_by_project()
+
     ui.init(data=data, state=state)  # init data for UI widgets
 
     g.my_app.run(data=data, state=state)
-
-
 
 
 @g.my_app.callback("connect_user")
@@ -77,10 +72,11 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
                     g.task2item.pop(prev_task_id)
                     g.task2item[task_id] = item_id
 
-        if return_data['rc'] == 0:
+        if return_data['rc'] == 0:  # if connection
             g.user2task[f'{user_id}'] = task_id
             return_data.update(additional_fields)
-            f.update_table('usersTable', user_id, {'status': UserStatusField.ONLINE})
+
+            g.user2stats[f'{user_id}']['status'] = UserStatusField.ONLINE
 
         g.my_app.send_response(request_id, data=return_data)
     except Exception as ex:
@@ -124,7 +120,7 @@ def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_upd
 
         g.task2item.pop(task_id)
 
-    f.update_table('usersTable', user_id, {'status': UserStatusField.ONLINE})
+    g.user2stats[f'{user_id}']['status'] = UserStatusField.ONLINE
     queue_stats.update_tables(fields_to_update)
 
     g.my_app.send_response(request_id, data={'status': 'done'})
@@ -151,9 +147,7 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         f.update_item_stats(item_id=item_id, fields=state['item_fields'])
         f.update_user_stats(user_id=user_id, fields=state['user_fields'])
 
-    f.update_table('usersTable', user_id, state['user_fields'])
     queue_stats.update_tables(fields_to_update)
-
     g.my_app.send_response(request_id, data={'status': 'done'})
 
 
@@ -185,7 +179,8 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
 
             g.task2item[task_id] = item_id
 
-        f.update_table('usersTable', user_id, {'status': UserStatusField.IN_WORK})
+        g.user2stats[f'{user_id}']['status'] = UserStatusField.IN_WORK
+
         g.my_app.send_response(request_id, data={'item_id': item_id})
         queue_stats.update_tables(fields_to_update)
     else:
