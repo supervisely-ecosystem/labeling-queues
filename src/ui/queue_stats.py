@@ -16,6 +16,7 @@ from sly_fields_names import UserStatsField
 
 def init_fields(state, data):
     state['itemsCount'] = len(g.item2stats)
+    state['clickedRow'] = None
 
     state['collapsedQueues'] = {
         'labeling_q': False,
@@ -80,3 +81,7 @@ def update_tables(fields_to_update):
 
     for table_name, items_status in table_names.items():
         fields_to_update[f'data.{table_name}'] = get_table_by_status(items_status)
+
+
+
+

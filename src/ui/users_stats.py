@@ -100,7 +100,7 @@ def update_users_additional_stats():
 @g.my_app.periodic(seconds=5)
 @g.update_fields
 def recheck_user_statuses(api, task_id, fields_to_update):
-    sly.logger.info('function called')
+    # sly.logger.info('function called')
     for user_id, user_stats in g.user2stats.items():
         user_task_id = g.user2task.get(f'{user_id}', None)
 

@@ -61,18 +61,19 @@
                                     sortable
                                     label="ITEM ID"
                                     width="120px">
-
                                 <template scope="scope">
-                                    {{scope.row.item_id}}
+                                    <a :href="`${scope.row.item_url}`" target="_blank">{{scope.row.item_id}}</a>
                                 </template>
                             </el-table-column>
                             <el-table-column
                                     prop="item_name"
                                     sortable
-                                    label="ITEM NAME"
-                            >
+                                    label="ITEM NAME">
                                 <template scope="scope">
-                                    {{scope.row.item_name}}
+                                    <div style="overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                        {{scope.row.item_name}}
+
+                                    </div>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -95,6 +96,18 @@
                                     label="TIME IN WORK">
                                 <template scope="scope">
                                     {{scope.row.work_time}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    label="TAGS">
+                                <template scope="scope">
+                                    {{scope.row.tags_count}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    label="OBJECTS">
+                                <template scope="scope">
+                                    {{scope.row.objects_count}}
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -156,6 +169,21 @@
                                     label="TIME IN WORK">
                                 <template scope="scope">
                                     {{scope.row.work_time}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    v-if="data.labelingInProgressTable[0].tags_count != null"
+                                    label="TAGS">
+
+                                <template scope="scope">
+                                    {{scope.row.tags_count}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    v-if="data.labelingInProgressTable[0].objects_count != null"
+                                    label="OBJECTS">
+                                <template scope="scope">
+                                    {{scope.row.objects_count}}
                                 </template>
                             </el-table-column>
                         </el-table>

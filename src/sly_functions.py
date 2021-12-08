@@ -9,11 +9,20 @@ import sly_globals as g
 from sly_fields_names import ItemsStatusField, UserStatusField, UserStatsField
 
 
+def get_item_url(item_id):
+    if g.project_info.type == 'videos':
+        item_info = g.api.video.get_info_by_id(item_id)
+        return g.api.video.url(item_info.dataset_id, item_id)
+
+
 def update_project_items_info(project_id):
     datasets_list = g.api.dataset.get_list(project_id)
 
     for current_dataset in datasets_list:
-        items_list = g.api.video.get_list(current_dataset.id)
+        if g.project_info.type == 'videos':
+            items_list = g.api.video.get_list(current_dataset.id)
+        else:
+            raise NotImplemented(f'Project type {g.project_info.type} not implemented')
 
         for current_item in items_list:
             table_row = {
@@ -28,6 +37,9 @@ def update_project_items_info(project_id):
 
             existing_fields = g.item2stats.get(f"{current_item.id}", {})
             table_row.update(existing_fields)  # updating by cached stats
+
+            table_row.update(get_additional_item_stats(current_item.id))
+            table_row.update({'item_url': get_item_url(current_item.id)})
 
             table_row.update({'status': ItemsStatusField.NEW})  # DEBUG
             g.item2stats[f'{current_item.id}'] = table_row
@@ -141,8 +153,6 @@ def user_have_rights(user_id, task_id, user_mode):
     return False
 
 
-
-
 def update_item_stats(item_id, fields):
     g.item2stats[f'{item_id}'].update(fields)  # update locally
     update_custom_data(field_name='item2stats', data={f"{item_id}": fields})  # update remotely
@@ -183,6 +193,7 @@ def update_custom_data(field_name, data):
 
     project_custom_data[field_name] = current_field
     g.api.project.update_custom_data(g.project_id, project_custom_data)
+
 
 # legacy
 # def update_table(table_name, item_id, fields_to_update):
@@ -241,3 +252,27 @@ def get_users_table():
         table.append(table_row)
 
     return table
+
+
+def get_tags_count_by_annotation(video_annotation):
+    tags_count = 0
+
+    for tag in video_annotation['tags']:
+        frame_range = tag.get('frameRange', [0, -1])
+        tags_count += frame_range[1] - frame_range[0] + 1
+
+    return tags_count
+
+
+def get_additional_item_stats(item_id):
+    stats_to_return = {}
+
+    if g.project_info.type == 'videos':
+        video_annotation = g.api.video.annotation.download(item_id)
+
+        stats_to_return.update({
+            'tags_count': get_tags_count_by_annotation(video_annotation),
+            'objects_count': len(video_annotation['objects']),
+        })
+
+    return stats_to_return

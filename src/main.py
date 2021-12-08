@@ -143,6 +143,7 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         }
 
         state['item_fields'].update(item_fields)
+        state['item_fields'].update(f.get_additional_item_stats(item_id))
 
         f.update_item_stats(item_id=item_id, fields=state['item_fields'])
         f.update_user_stats(user_id=user_id, fields=state['user_fields'])
@@ -187,13 +188,15 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
         return -1
 
 
-#  @TODO: publish API method video.add_tag
-#  @TODO: publish update_fields decorator
+#  INP@TODO: publish API method video.add_tag
+#  INP@TODO: publish update_fields decorator
+#  INP@TODO: publish AppService.periodic functional
+#  INP@TODO: publish api.video_api.url method
 
-#  @TODO: connected sessions hooker — by myself
-#  @TODO: get user_id from request — every session has info which task_id get info of owner
-#  @TODO: items link to project — api.image.url(TEAM_ID, WORKSPACE_ID, project.id, dataset.id, info.id), info.name)
-#  @TODO: additional items stats —
+#  DONE@TODO: connected sessions hooker — by myself
+#  ?@TODO: get user_id from request — every session has info which task_id get info of owner
+#  DONE@TODO: additional items stats
+#  DONE@TODO: items link to project — api.image.url(TEAM_ID, WORKSPACE_ID, project.id, dataset.id, info.id), info.name)
 
 
 if __name__ == "__main__":
