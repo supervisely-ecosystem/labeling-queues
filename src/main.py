@@ -8,10 +8,7 @@ import sly_globals as g
 import sly_functions as f
 
 import queue_stats
-
 from sly_fields_names import ItemsStatusField, UserStatusField
-
-
 
 
 def main():
@@ -35,6 +32,19 @@ def main():
     g.my_app.run(data=data, state=state)
 
 
+def get_controller_info_for_user(user_id):
+    users_statuses = g.api.task.get_fields(g.task_id, ['state.annotatorsIds', 'state.reviewersIds'])
+    annotatorsIds, reviewersIds = users_statuses['state.annotatorsIds'], users_statuses['state.reviewersIds']
+    return {
+        'admin_nickname': f'{g.admin_nickname}',
+        'items_for_review_count': len(list(g.reviewing_queue.queue)),
+        'items_for_annotation_count': len(list(g.labeling_queue.queue)),
+        'can_annotate': annotatorsIds.get(str(user_id), False),
+        'can_review': reviewersIds.get(str(user_id), False),
+        'user_stats': g.user2stats.get(str(user_id))
+    }
+
+
 @g.my_app.callback("connect_user")
 @sly.timeit
 @g.update_fields
@@ -44,18 +54,6 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         request_id = context["request_id"]
         user_id = state['userId']
         task_id = state['taskId']
-
-        users_statuses = g.api.task.get_fields(g.task_id, ['state.annotatorsIds', 'state.reviewersIds'])
-        annotatorsIds, reviewersIds = users_statuses['state.annotatorsIds'], users_statuses['state.reviewersIds']
-
-        additional_fields = {
-            'admin_nickname': f'{g.admin_nickname}',
-            'items_for_review_count': len(list(g.reviewing_queue.queue)),
-            'items_for_annotation_count': len(list(g.labeling_queue.queue)),
-            'can_annotate': annotatorsIds.get(str(user_id), False),
-            'can_review': reviewersIds.get(str(user_id), False),
-            'user_stats': g.user2stats.get(str(user_id))
-        }
 
         if g.user2task.get(f'{user_id}', None) is None:  # if user not connected before
             return_data = {'rc': 0}
@@ -72,9 +70,10 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
                     g.task2item.pop(prev_task_id)
                     g.task2item[task_id] = item_id
 
-        if return_data['rc'] == 0:  # if connection
+        if return_data['rc'] == 0:  # if connected
             g.user2task[f'{user_id}'] = task_id
-            return_data.update(additional_fields)
+
+            return_data.update(get_controller_info_for_user(user_id))
 
             g.user2stats[f'{user_id}']['status'] = UserStatusField.ONLINE
 
@@ -123,7 +122,9 @@ def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_upd
     g.user2stats[f'{user_id}']['status'] = UserStatusField.ONLINE
     queue_stats.update_tables(fields_to_update)
 
-    g.my_app.send_response(request_id, data={'status': 'done'})
+    updated_controller_info = get_controller_info_for_user(user_id)
+
+    g.my_app.send_response(request_id, data=updated_controller_info)
 
 
 @g.my_app.callback("update_stats")
