@@ -136,19 +136,20 @@ def get_item_duration(current_item):
 def user_have_rights(user_id, task_id, user_mode):
     if user_mode == 'annotator':
         annotators_ids = g.api.task.get_field(g.task_id, 'state.annotatorsIds')
-        if not annotators_ids[str(user_id)]:
-            return False
+        if annotators_ids[str(user_id)]:
+            return True
 
     elif user_mode == 'reviewer':
         reviewers_ids = g.api.task.get_field(g.task_id, 'state.reviewersIds')
-        if not reviewers_ids[str(user_id)]:
-            return False
+        if reviewers_ids[str(user_id)]:
+            return True
+
     else:
         return False
 
-    if g.user2task.get(str(user_id)) == task_id \
-            and g.user2stats[f'{user_id}']['status'] == UserStatusField.ONLINE:
-        return True
+    # if g.user2task.get(str(user_id)) == task_id \
+    #         and g.user2stats[f'{user_id}']['status'] == UserStatusField.ONLINE:
+    #     return True
 
     return False
 
@@ -276,3 +277,19 @@ def get_additional_item_stats(item_id):
         })
 
     return stats_to_return
+
+
+def add_user_to_workers(item_id, user_id, user_mode):
+    item_info = g.item2stats.get(f'{item_id}')
+    if user_mode == 'annotator':
+        existing_annotators = set(item_info.get('annotators', []))
+        existing_annotators.add(get_user_login_by_id(user_id))
+        item_info['annotators'] = list(existing_annotators)
+
+        return {'annotators': item_info['annotators']}
+    if user_mode == 'reviewer':
+        existing_reviewers = set(item_info.get('reviewers', []))
+        existing_reviewers.add(get_user_login_by_id(user_id))
+        item_info['reviewers'] = list(existing_reviewers)
+
+        return {'reviewers': item_info['reviewers']}

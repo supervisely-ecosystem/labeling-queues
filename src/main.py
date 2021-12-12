@@ -11,6 +11,21 @@ import queue_stats
 from sly_fields_names import ItemsStatusField, UserStatusField
 
 
+@g.my_app.callback("init_tables_fields")
+@sly.timeit
+@g.update_fields
+def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
+    fields_to_update['state.refreshingUsersStatsTable'] = False
+    fields_to_update['state.refreshingUsersStatsTableTime'] = f.get_current_time()
+
+    fields_to_update['state.refreshingUsersTable'] = False
+    fields_to_update['state.refreshingUsersTableTime'] = f.get_current_time()
+
+    f.update_project_items_info(g.project_id)
+    f.update_project_users_info(g.team_id)
+    f.fill_queues_by_project()
+
+
 def main():
     sly.logger.info("Script arguments", extra={
         "context.teamId": g.team_id,
@@ -23,13 +38,9 @@ def main():
     data = {}
     state = {}
 
-    f.update_project_items_info(g.project_id)
-    f.update_project_users_info(g.team_id)
-    f.fill_queues_by_project()
-
     ui.init(data=data, state=state)  # init data for UI widgets
 
-    g.my_app.run(data=data, state=state)
+    g.my_app.run(data=data, state=state, initial_events=[{"command": "init_tables_fields"}])
 
 
 def get_controller_info_for_user(user_id):
@@ -55,20 +66,21 @@ def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_up
         user_id = state['userId']
         task_id = state['taskId']
 
-        if g.user2task.get(f'{user_id}', None) is None:  # if user not connected before
-            return_data = {'rc': 0}
-        else:
-            prev_task_id = g.user2task[f'{user_id}']
-            # if f.session_is_online(prev_task_id): # DEBUG
-            if not True:  # if preview task is alive
-                return_data = {'rc': -1,
-                               'taskId': prev_task_id}
-            else:
-                return_data = {'rc': 0}
-                item_id = g.task2item.get(prev_task_id, None)
-                if item_id is not None:
-                    g.task2item.pop(prev_task_id)
-                    g.task2item[task_id] = item_id
+        return_data = {'rc': 0}
+        # if g.user2task.get(f'{user_id}', None) is None:  # if user not connected before
+        #     return_data = {'rc': 0}
+        # else:
+        #     prev_task_id = g.user2task[f'{user_id}']
+        #     # if f.session_is_online(prev_task_id): # DEBUG
+        #     if not True:  # if preview task is alive
+        #         return_data = {'rc': -1,
+        #                        'taskId': prev_task_id}
+        #     else:
+        #         return_data = {'rc': 0}
+        #         item_id = g.task2item.get(prev_task_id, None)
+        #         if item_id is not None:
+        #             g.task2item.pop(prev_task_id)
+        #             g.task2item[task_id] = item_id
 
         if return_data['rc'] == 0:  # if connected
             g.user2task[f'{user_id}'] = task_id
@@ -136,6 +148,7 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
 
     user_id = state['userId']
     task_id = state['taskId']
+    user_mode = state['mode']
 
     item_id = g.task2item.get(task_id, None)
     if item_id is not None:
@@ -143,6 +156,9 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
             'work_time': f.get_datetime_by_unix(time.time() - g.item2stats[f'{item_id}']['work_started_unix'])
         }
 
+        workers_info = f.add_user_to_workers(item_id, user_id, user_mode)
+
+        state['item_fields'].update(workers_info)
         state['item_fields'].update(item_fields)
         state['item_fields'].update(f.get_additional_item_stats(item_id))
 

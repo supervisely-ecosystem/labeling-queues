@@ -11,7 +11,7 @@ import sly_functions as f
 
 
 def init_fields(state, data):
-    state['refreshingUsersTable'] = False
+    state['refreshingUsersTable'] = True
     state['refreshingUsersTableTime'] = f.get_current_time()
 
     data['usersTable'] = f.get_users_table()

@@ -15,7 +15,7 @@ from sly_fields_names import UserStatsField, UserStatusField
 
 
 def init_fields(state, data):
-    state['refreshingUsersStatsTable'] = False
+    state['refreshingUsersStatsTable'] = True
     state['refreshingUsersStatsTableTime'] = f.get_current_time()
 
     update_users_additional_stats()
