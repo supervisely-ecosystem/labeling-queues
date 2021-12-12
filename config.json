@@ -14,8 +14,14 @@
 
   "need_gpu": false,
   "icon": "https://imgur.com/tGLG1yj.png",
+  "icon_background": "#FFFFFF",
 
   "icon_cover": true,
   "instance_version": "6.4.21"
+  
+  "context_menu": {
+    "target": ["videos_project"],
+    "context_category": "Labeling Jobs"
+  },
 
 }
