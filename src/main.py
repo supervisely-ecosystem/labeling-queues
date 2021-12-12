@@ -2,7 +2,7 @@ import datetime
 import time
 
 import supervisely_lib as sly
-import ui as ui
+import ui.ui as ui
 
 import sly_globals as g
 import sly_functions as f
