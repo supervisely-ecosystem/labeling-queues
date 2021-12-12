@@ -125,6 +125,7 @@ def recheck_user_statuses(api, task_id, fields_to_update):
 @g.my_app.callback("refresh_users_stats_table")
 @sly.timeit
 @g.update_fields
+@g.my_app.ignore_errors_and_show_dialog_window()
 def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersStatsTable'] = False
     fields_to_update['state.refreshingUsersStatsTableTime'] = f.get_current_time()

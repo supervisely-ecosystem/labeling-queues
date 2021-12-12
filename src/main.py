@@ -59,7 +59,7 @@ def get_controller_info_for_user(user_id):
 @g.my_app.callback("connect_user")
 @sly.timeit
 @g.update_fields
-# @g.my_app.ignore_errors_and_show_dialog_window()
+@g.my_app.ignore_errors_and_show_dialog_window()
 def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     try:
         request_id = context["request_id"]
@@ -109,7 +109,7 @@ def get_returned_item_status(user_mode, review_needed):
 @g.my_app.callback("return_item")
 @sly.timeit
 @g.update_fields
-# @g.my_app.ignore_errors_and_show_dialog_window()
+@g.my_app.ignore_errors_and_show_dialog_window()
 def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     request_id = context["request_id"]
 
@@ -142,7 +142,7 @@ def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_upd
 @g.my_app.callback("update_stats")
 @sly.timeit
 @g.update_fields
-# @g.my_app.ignore_errors_and_show_dialog_window()
+@g.my_app.ignore_errors_and_show_dialog_window()
 def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     request_id = context["request_id"]
 
@@ -172,7 +172,7 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
 @g.my_app.callback("get_item")
 @sly.timeit
 @g.update_fields
-# @g.my_app.ignore_errors_and_show_dialog_window()
+@g.my_app.ignore_errors_and_show_dialog_window()
 def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     request_id = context["request_id"]
     user_id = state['userId']
