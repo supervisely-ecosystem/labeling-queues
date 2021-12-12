@@ -23,5 +23,10 @@
     "target": ["videos_project"],
     "context_category": "Labeling Jobs"
   }
+  
+  "session_tags": [
+    "labeling_jobs"
+
+  ]
 
 }
