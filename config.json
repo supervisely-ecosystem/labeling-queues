@@ -17,7 +17,7 @@
   "icon_background": "#FFFFFF",
 
   "icon_cover": true,
-  "instance_version": "6.4.21"
+  "instance_version": "6.4.21",
   
   "context_menu": {
     "target": ["videos_project"],
