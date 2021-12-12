@@ -16,7 +16,7 @@
   "icon": "https://imgur.com/tGLG1yj.png",
   "icon_background": "#FFFFFF",
 
-  "icon_cover": true,
+  "icon_cover": false,
   "instance_version": "6.4.21",
   
   "context_menu": {
