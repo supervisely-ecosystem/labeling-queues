@@ -205,10 +205,6 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
         return -1
 
 
-#  INP@TODO: publish API method video.add_tag
-#  INP@TODO: publish update_fields decorator
-#  INP@TODO: publish AppService.periodic functional
-#  INP@TODO: publish api.video_api.url method
 
 #  DONE@TODO: connected sessions hooker — by myself
 #  ?@TODO: get user_id from request — every session has info which task_id get info of owner

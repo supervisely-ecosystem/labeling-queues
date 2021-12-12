@@ -11,8 +11,9 @@ import sly_functions as f
 
 from dotenv import load_dotenv  # pip install python-dotenv\
 
-load_dotenv("../debug.env")
-load_dotenv("../secret_debug.env", override=True)
+load_dotenv("/Users/qanelph/Desktop/work/supervisely/annotation-controller/debug.env")
+load_dotenv("/Users/qanelph/Desktop/work/supervisely/annotation-controller/secret_debug.env", override=True)
+
 
 sly.logger.setLevel('DEBUG')
 
@@ -55,7 +56,6 @@ user2stats = project_custom_data.get('user2stats', {})  # user_id -> his stats
 
 labeling_queue = queue.Queue(maxsize=int(1e5))
 reviewing_queue = queue.Queue(maxsize=int(1e5))
-
 
 
 def update_fields(func):
