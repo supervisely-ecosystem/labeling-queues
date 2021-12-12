@@ -1,8 +1,8 @@
 {
-  "name": "Annotations Controller",
+  "name": "Labeling Queues",
   "type": "app",
   "categories": [
-    "annotations",
+    "labeling",
     "serving"
   ],
 
@@ -13,7 +13,7 @@
   "task_location": "workspace_tasks",
 
   "need_gpu": false,
-  "icon": "https://imgur.com/a9u0M3Y.png",
+  "icon": "https://imgur.com/tGLG1yj.png",
 
   "icon_cover": true,
   "instance_version": "6.4.21"
