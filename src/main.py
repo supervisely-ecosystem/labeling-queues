@@ -25,6 +25,8 @@ def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger,
     f.update_project_users_info(g.team_id)
     f.fill_queues_by_project()
 
+    queue_stats.update_tables(fields_to_update)
+
 
 def main():
     sly.logger.info("Script arguments", extra={
