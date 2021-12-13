@@ -205,7 +205,6 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
         return -1
 
 
-
 #  DONE@TODO: connected sessions hooker — by myself
 #  ?@TODO: get user_id from request — every session has info which task_id get info of owner
 #  DONE@TODO: additional items stats

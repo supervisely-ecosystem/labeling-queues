@@ -216,7 +216,7 @@ def get_queue_by_user_mode(queue_name):
     if queue_name == 'annotator':
         return g.labeling_queue
     elif queue_name == 'reviewer':
-        return g.labeling_queue
+        return g.reviewing_queue
 
 
 def return_item_to_queue(item_id):
