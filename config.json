@@ -6,7 +6,7 @@
     "serving"
   ],
 
-  "description": "Create a job and control the process",
+  "description": "All in one app to create, review and control the process of the labeling queues",
   "docker_image": "supervisely/base-py-sdk:6.3.0",
   "main_script": "src/main.py",
   "gui_template": "src/gui.html",
