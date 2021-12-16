@@ -29,13 +29,23 @@ Application key points:
 
 
 # How to Run
+
 1. Add [Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.
 
 <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="" width="350px" style='padding-bottom: 20px'/>  
 
 2. Run app from the context menu of Supervisely Videos project:
 
-<img src="" width="100%"/>
+<img src="https://i.imgur.com/iYmHJNH.png" width="70%"/>
+
+
+# How to Use
+
+1. Set users permissions to annotate and review data
+2. Monitor statistics for every user involved in the labeling queues
+3. Monitor labeling queues progress
+
+<img src="https://i.imgur.com/JHtPE5T.png"/>  
 
 # Demo Video
 <a data-key="sly-embeded-video-link" href="" data-video-code="">
