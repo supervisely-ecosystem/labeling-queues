@@ -7,8 +7,8 @@
 <p align="center">
   <a href="#Overview">Overview</a> •
   <a href="#How-To-Run">How To Run</a> •
-  <a href="#Demo-Video">Demo Video</a> •
-  <a href="#Results">Results</a>
+  <a href="#How-To-Use">How To Use</a> •
+  <a href="#Demo-Video">Demo Video</a>
 </p>
 
 [![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/labeling-queues)
@@ -22,10 +22,12 @@
 
 # Overview
 
-Application...
+Application creates labeling job queues and let user with admin rights to control the whole labeling process
 
 Application key points:  
-- 
+- Control team members permissions to annotate and review data
+- Refresh stats tables to monitor labeling job process
+- Analyze the work done by users using convenient `Users Stats` table
 
 
 # How to Run
