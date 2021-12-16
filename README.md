@@ -32,7 +32,7 @@ Application key points:
 
 1. Add [Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.
 
-<img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="" width="350px" style='padding-bottom: 20px'/>  
+<img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://i.imgur.com/1zczdAj.png" width="450px" style='padding-bottom: 20px'/>  
 
 2. Run app from the context menu of Supervisely Videos project:
 
