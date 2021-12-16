@@ -26,6 +26,8 @@ def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger,
     f.fill_queues_by_project()
 
     queue_stats.update_tables(fields_to_update)
+    
+    fields_to_update['state.itemsCount'] = len(g.item2stats)
 
 
 def main():
