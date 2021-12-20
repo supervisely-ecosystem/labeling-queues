@@ -1,8 +1,8 @@
 <div align="center" markdown>
-<img src=""/>
+<img src="https://i.imgur.com/kzXvpQ4.jpg"/>
 
 
-# Labeling queues
+# Labeling Queues
 
 <p align="center">
   <a href="#Overview">Overview</a> •
