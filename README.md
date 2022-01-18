@@ -22,12 +22,14 @@
 
 # Overview
 
-Application creates labeling job queues and let user with admin rights to control the whole labeling process
+Application creates Classic Labeling Process based on Queues
 
 **Application key points:**
-- Control team members permissions to annotate and review data
-- Refresh stats tables to monitor labeling job process
-- Analyze the work done by users using convenient `Users Stats` table
+- Select Annotators and Reviewers
+- Monitor labeling process 
+- Monitor each Annotator and Reviewer stats
+- Monitor items stats
+
 
 **List of compatible applications:**
 
@@ -38,13 +40,11 @@ Application creates labeling job queues and let user with admin rights to contro
 # How to Run
 
 1. Add [Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.
+  <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://imgur.com/1br4fxl.png" width="450px" style='padding-bottom: 20px'/>  
 
-<img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://i.imgur.com/1zczdAj.png" width="450px" style='padding-bottom: 20px'/>  
+2. Run app from the context menu of Videos Project ([example](https://ecosystem.supervise.ly/projects/videos-example)):
 
-2. Run app from the context menu of Supervisely Videos project:
-
-<img src="https://i.imgur.com/iYmHJNH.png" width="70%"/>
-
+<img src="https://imgur.com/EgaNZRm.png" width="70%"/>
 
 
 # Common apps
@@ -54,15 +54,6 @@ After start you can use application with next Supervisely Applications ⬇️
 - [Action Recognition Labeling](https://ecosystem.supervise.ly/apps/action-recognition-labeling) 
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://i.imgur.com/D72gmm6.png" width="380px"/>
-
-
-# How to Use
-
-1. Set users permissions to annotate and review data
-2. Monitor statistics for every user involved in the labeling queues
-3. Monitor labeling queues progress
-
-<img src="https://i.imgur.com/JHtPE5T.png"/>  
 
 # Demo
 <a data-key="sly-embeded-video-link" href="" data-video-code="">
