@@ -7,8 +7,8 @@
 <p align="center">
   <a href="#Overview">Overview</a> •
   <a href="#How-To-Run">How To Run</a> •
-  <a href="#Demo">Demo</a> •
-  <a href="#Demo-Video">Demo Video</a>
+  <a href="#Common-apps">Common Apps</a> •
+  <a href="#Demo">Demo</a>
 </p>
 
 [![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/labeling-queues)
@@ -30,13 +30,6 @@ Application creates Classic Labeling Process based on Queues
 - Monitor each Annotator and Reviewer stats
 - Monitor items stats
 
-
-**List of compatible applications:**
-
-- [Action Recognition Labeling](https://ecosystem.supervise.ly/apps/action-recognition-labeling) 
-
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://imgur.com/3aCwsQ0.png" width="350px"/>
-
 # How to Run
 
 1. Add [Classic Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.
@@ -52,7 +45,7 @@ After start you can use application with next Supervisely Applications ⬇️
 
 - [Action Recognition Labeling](https://ecosystem.supervise.ly/apps/action-recognition-labeling) 
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://i.imgur.com/D72gmm6.png" width="380px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://imgur.com/3aCwsQ0.png" width="350px"/>
 
 # Demo
 <a data-key="sly-embeded-video-link" href="" data-video-code="">
