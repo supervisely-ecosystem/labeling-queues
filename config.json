@@ -1,12 +1,12 @@
 {
-  "name": "Labeling Queues",
+  "name": "Classic Labeling Queues",
   "type": "app",
   "categories": [
     "labeling",
     "serving"
   ],
 
-  "description": "All in one app to create, review and control the process of the labeling queues",
+  "description": "Annotate Project using Queues",
   "docker_image": "supervisely/base-py-sdk:6.3.0",
   "main_script": "src/main.py",
   "gui_template": "src/gui.html",

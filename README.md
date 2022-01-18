@@ -1,13 +1,13 @@
 <div align="center" markdown>
-<img src="https://i.imgur.com/kzXvpQ4.jpg"/>
+<img src="https://imgur.com/qK3W7jz.png"/>
 
 
-# Labeling Queues
+# Classic Labeling Queues
 
 <p align="center">
   <a href="#Overview">Overview</a> •
   <a href="#How-To-Run">How To Run</a> •
-  <a href="#How-To-Use">How To Use</a> •
+  <a href="#Demo">Demo</a> •
   <a href="#Demo-Video">Demo Video</a>
 </p>
 
@@ -46,6 +46,16 @@ Application creates labeling job queues and let user with admin rights to contro
 <img src="https://i.imgur.com/iYmHJNH.png" width="70%"/>
 
 
+
+# Common apps
+
+After start you can use application with next Supervisely Applications ⬇️ 
+
+- [Action Recognition Labeling](https://ecosystem.supervise.ly/apps/action-recognition-labeling) 
+
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://i.imgur.com/D72gmm6.png" width="380px"/>
+
+
 # How to Use
 
 1. Set users permissions to annotate and review data
@@ -54,7 +64,7 @@ Application creates labeling job queues and let user with admin rights to contro
 
 <img src="https://i.imgur.com/JHtPE5T.png"/>  
 
-# Demo Video
+# Demo
 <a data-key="sly-embeded-video-link" href="" data-video-code="">
     <img src="" alt="SLY_EMBEDED_VIDEO_LINK"  width="70%">
 </a>
