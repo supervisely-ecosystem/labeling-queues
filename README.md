@@ -35,16 +35,15 @@ Application creates Classic Labeling Process based on Queues
 
 - [Action Recognition Labeling](https://ecosystem.supervise.ly/apps/action-recognition-labeling) 
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://i.imgur.com/D72gmm6.png" width="380px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://imgur.com/3aCwsQ0.png" width="350px"/>
 
 # How to Run
 
 1. Add [Classic Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.
-  <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://imgur.com/1br4fxl.png" width="450px" style='padding-bottom: 20px'/>  
+  <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://imgur.com/nC3Oofo.png" width="350px" style='padding-bottom: 20px'/>  
 
-2. Run app from the context menu of Videos Project ([example](https://ecosystem.supervise.ly/projects/videos-example)):
-
-<img src="https://imgur.com/EgaNZRm.png" width="70%"/>
+2. Run app from the context menu of Videos Project ([example](https://ecosystem.supervise.ly/projects/videos-example)):  
+  <img src="https://imgur.com/EgaNZRm.png" width="70%"/>
 
 
 # Common apps
