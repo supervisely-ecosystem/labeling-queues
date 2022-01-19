@@ -49,5 +49,5 @@ After start you can use application with next Supervisely Applications ⬇️
 
 # Demo
 <a data-key="sly-embeded-video-link" href="https://youtu.be/OdBAcGHcAn4" data-video-code="OdBAcGHcAn4">
-    <img src="" alt="SLY_EMBEDED_VIDEO_LINK"  width="70%">
+    <img src="https://imgur.com/WcdE0dL.png" alt="SLY_EMBEDED_VIDEO_LINK"  width="70%">
 </a>
