@@ -25,7 +25,7 @@
 Application creates Classic Labeling Process based on Queues
 
 **Application key points:**
-- Now available for Videos Projects only 
+- **Now works with Videos Projects only**
 - Select Annotators and Reviewers
 - Monitor labeling process 
 - Monitor each Annotator and Reviewer stats
