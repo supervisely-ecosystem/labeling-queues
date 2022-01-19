@@ -32,7 +32,7 @@ Application creates Classic Labeling Process based on Queues
 
 # How to Run
 
-1. Add [Classic Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.
+1. Add [Classic Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.  
   <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://imgur.com/nC3Oofo.png" width="350px" style='padding-bottom: 20px'/>  
 
 2. Run app from the context menu of Videos Project ([example](https://ecosystem.supervise.ly/projects/videos-example)):  
@@ -48,6 +48,6 @@ After start you can use application with next Supervisely Applications ⬇️
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://imgur.com/3aCwsQ0.png" width="350px"/>
 
 # Demo
-<a data-key="sly-embeded-video-link" href="" data-video-code="">
+<a data-key="sly-embeded-video-link" href="https://youtu.be/OdBAcGHcAn4" data-video-code="OdBAcGHcAn4">
     <img src="" alt="SLY_EMBEDED_VIDEO_LINK"  width="70%">
 </a>
