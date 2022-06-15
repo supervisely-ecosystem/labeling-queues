@@ -2,8 +2,8 @@
   "name": "Classic Labeling Queues",
   "type": "app",
   "categories": [
-    "labeling",
-    "serving"
+    "videos",
+    "collaboration"
   ],
   "description": "Annotate Project using Queues",
   "docker_image": "supervisely/base-py-sdk:6.3.0",
