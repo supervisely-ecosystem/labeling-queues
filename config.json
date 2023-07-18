@@ -11,6 +11,7 @@
   "gui_template": "src/gui.html",
   "task_location": "application_sessions",
   "need_gpu": false,
+  "gpu": "preferred",
   "icon": "https://imgur.com/tGLG1yj.png",
   "icon_background": "#FFFFFF",
   "icon_cover": false,

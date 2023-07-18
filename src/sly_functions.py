@@ -77,6 +77,8 @@ def update_project_users_info(team_id):
 
 
 def get_user_last_seen(datetime_str):
+    if datetime_str is None:
+        return "never"
     d = datetime.datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
     last_seen_unix = time.mktime(time.gmtime()) - time.mktime(d.timetuple())
