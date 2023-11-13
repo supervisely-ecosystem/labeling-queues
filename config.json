@@ -1,29 +1,22 @@
 {
-    "name": "Classic Labeling Queues",
-    "type": "app",
-    "categories": [
-        "videos",
-        "collaboration"
-    ],
-    "description": "Annotate Project using Queues",
-    "docker_image": "supervisely/collaboration:0.0.5",
-    "main_script": "src/main.py",
-    "gui_template": "src/gui.html",
-    "task_location": "application_sessions",
-    "need_gpu": false,
-    "gpu": "preferred",
-    "icon": "https://imgur.com/tGLG1yj.png",
-    "icon_background": "#FFFFFF",
-    "icon_cover": false,
-    "instance_version": "6.4.21",
-    "context_menu": {
-        "target": [
-            "videos_project"
-        ],
-        "context_category": "Labeling Jobs"
-    },
-    "session_tags": [
-        "labeling_jobs"
-    ],
-    "poster": "https://imgur.com/qK3W7jz.png"
+  "name": "Classic Labeling Queues",
+  "type": "app",
+  "categories": ["videos", "collaboration"],
+  "description": "Annotate Project using Queues",
+  "docker_image": "supervisely/collaboration:6.72.182",
+  "main_script": "src/main.py",
+  "gui_template": "src/gui.html",
+  "task_location": "application_sessions",
+  "need_gpu": false,
+  "gpu": "preferred",
+  "icon": "https://imgur.com/tGLG1yj.png",
+  "icon_background": "#FFFFFF",
+  "icon_cover": false,
+  "min_instance_version": "6.8.48",
+  "context_menu": {
+    "target": ["videos_project"],
+    "context_category": "Labeling Jobs"
+  },
+  "session_tags": ["labeling_jobs"],
+  "poster": "https://imgur.com/qK3W7jz.png"
 }
