@@ -196,7 +196,7 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
         item_id = g.task2item.get(task_id, None)
         if item_id is None:
             try:
-                item_id = current_queue.get()
+                item_id = current_queue.get(timeout=5)
             except queue.Empty:
                 sly.logger.warn(f"Queue for user {user_id} (user_mode: {user_mode}) is empty")
                 g.my_app.send_response(request_id, data={'item_id': None})
