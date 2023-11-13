@@ -1,7 +1,9 @@
-import datetime
+import queue
 import time
 
-import supervisely_lib as sly
+import supervisely as sly
+from supervisely import handle_exceptions
+
 import ui.ui as ui
 
 import sly_globals as g
@@ -14,6 +16,7 @@ from sly_fields_names import ItemsStatusField, UserStatusField
 @g.my_app.callback("init_tables_fields")
 @sly.timeit
 @g.update_fields
+@handle_exceptions
 def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersStatsTable'] = False
     fields_to_update['state.refreshingUsersStatsTableTime'] = f.get_current_time()
@@ -64,6 +67,7 @@ def get_controller_info_for_user(user_id):
 @sly.timeit
 @g.update_fields
 @g.my_app.ignore_errors_and_show_dialog_window()
+@handle_exceptions
 def connect_user(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     try:
         request_id = context["request_id"]
@@ -114,6 +118,7 @@ def get_returned_item_status(user_mode, review_needed):
 @sly.timeit
 @g.update_fields
 @g.my_app.ignore_errors_and_show_dialog_window()
+@handle_exceptions
 def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     request_id = context["request_id"]
 
@@ -147,6 +152,7 @@ def return_item(api: sly.Api, task_id, context, state, app_logger, fields_to_upd
 @sly.timeit
 @g.update_fields
 @g.my_app.ignore_errors_and_show_dialog_window()
+@handle_exceptions
 def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     request_id = context["request_id"]
 
@@ -177,6 +183,7 @@ def update_stats(api: sly.Api, task_id, context, state, app_logger, fields_to_up
 @sly.timeit
 @g.update_fields
 @g.my_app.ignore_errors_and_show_dialog_window()
+@handle_exceptions
 def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     request_id = context["request_id"]
     user_id = state['userId']
@@ -188,7 +195,12 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
 
         item_id = g.task2item.get(task_id, None)
         if item_id is None:
-            item_id = current_queue.get()
+            try:
+                item_id = current_queue.get()
+            except queue.Empty:
+                sly.logger.warn(f"Queue for user {user_id} (user_mode: {user_mode}) is empty")
+                g.my_app.send_response(request_id, data={'item_id': None})
+                return
 
             item_fields = {
                 'status': ItemsStatusField.ANNOTATING if user_mode == 'annotator' else ItemsStatusField.REVIEWING,
