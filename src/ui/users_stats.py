@@ -6,7 +6,7 @@ import datetime
 import numpy as np
 
 import queue_stats
-import supervisely_lib as sly
+import supervisely as sly
 
 import sly_globals as g
 import sly_functions as f

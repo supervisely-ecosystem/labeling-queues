@@ -2,7 +2,7 @@ import functools
 import time
 import datetime
 
-import supervisely_lib as sly
+import supervisely as sly
 
 from sly_fields_names import UserStatusField
 

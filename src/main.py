@@ -1,7 +1,9 @@
-import datetime
+import queue
 import time
 
-import supervisely_lib as sly
+import supervisely as sly
+from supervisely import handle_exceptions
+
 import ui.ui as ui
 
 import sly_globals as g
@@ -30,6 +32,7 @@ def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger,
     fields_to_update['state.itemsCount'] = len(g.item2stats)
 
 
+@handle_exceptions
 def main():
     sly.logger.info("Script arguments", extra={
         "context.teamId": g.team_id,
@@ -188,7 +191,12 @@ def get_item(api: sly.Api, task_id, context, state, app_logger, fields_to_update
 
         item_id = g.task2item.get(task_id, None)
         if item_id is None:
-            item_id = current_queue.get()
+            try:
+                item_id = current_queue.get(timeout=5)
+            except queue.Empty:
+                sly.logger.warn(f"Queue for user {user_id} (user_mode: {user_mode}) is empty")
+                g.my_app.send_response(request_id, data={'item_id': None})
+                return
 
             item_fields = {
                 'status': ItemsStatusField.ANNOTATING if user_mode == 'annotator' else ItemsStatusField.REVIEWING,
