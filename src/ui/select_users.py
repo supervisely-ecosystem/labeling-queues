@@ -2,7 +2,8 @@ import functools
 import time
 import datetime
 
-import supervisely_lib as sly
+import supervisely as sly
+from supervisely import handle_exceptions
 
 from sly_fields_names import UserStatusField
 
@@ -24,6 +25,7 @@ def init_fields(state, data):
 @sly.timeit
 @g.update_fields
 @g.my_app.ignore_errors_and_show_dialog_window()
+@handle_exceptions
 def refresh_users_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersTable'] = False
     fields_to_update['state.refreshingUsersTableTime'] = f.get_current_time()

@@ -6,7 +6,8 @@ import datetime
 import numpy as np
 
 import queue_stats
-import supervisely_lib as sly
+import supervisely as sly
+from supervisely import handle_exceptions
 
 import sly_globals as g
 import sly_functions as f
@@ -99,6 +100,7 @@ def update_users_additional_stats():
 
 @g.my_app.periodic(seconds=5)
 @g.update_fields
+@handle_exceptions
 def recheck_user_statuses(api, task_id, fields_to_update):
     # sly.logger.info('function called')
     for user_id, user_stats in g.user2stats.items():
@@ -126,6 +128,7 @@ def recheck_user_statuses(api, task_id, fields_to_update):
 @sly.timeit
 @g.update_fields
 @g.my_app.ignore_errors_and_show_dialog_window()
+@handle_exceptions
 def refresh_users_stats_table(api: sly.Api, task_id, context, state, app_logger, fields_to_update):
     fields_to_update['state.refreshingUsersStatsTable'] = False
     fields_to_update['state.refreshingUsersStatsTableTime'] = f.get_current_time()
