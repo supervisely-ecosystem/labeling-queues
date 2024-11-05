@@ -11,11 +11,11 @@
   <a href="#Demo">Demo</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/labeling-queues)
-[![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/labeling-queues)
+[![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/labeling-queues)
-[![views](https://app.supervise.ly/img/badges/views/supervisely-ecosystem/labeling-queues.png)](https://supervise.ly)
-[![runs](https://app.supervise.ly/img/badges/runs/supervisely-ecosystem/labeling-queues.png)](https://supervise.ly)
+[![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/labeling-queues.png)](https://supervisely.com)
+[![runs](https://app.supervisely.com/img/badges/runs/supervisely-ecosystem/labeling-queues.png)](https://supervisely.com)
 
 </div>
 
@@ -32,10 +32,10 @@ Application creates Classic Labeling Process based on Queues
 
 # How to Run
 
-1. Add [Classic Labeling Queues](https://ecosystem.supervise.ly/apps/labeling-queues) to your team from Ecosystem.  
+1. Add [Classic Labeling Queues](https://ecosystem.supervisely.com/apps/labeling-queues) to your team from Ecosystem.  
   <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/labeling-queues" src="https://imgur.com/nC3Oofo.png" width="350px" style='padding-bottom: 20px'/>  
 
-2. Run app from the context menu of Videos Project ([example](https://ecosystem.supervise.ly/projects/videos-example)):  
+2. Run app from the context menu of Videos Project ([example](https://ecosystem.supervisely.com/projects/videos-example)):  
   <img src="https://imgur.com/EgaNZRm.png" width="70%"/>
 
 
@@ -43,7 +43,7 @@ Application creates Classic Labeling Process based on Queues
 
 After start you can use application with next Supervisely Applications ⬇️ 
 
-- [Action Recognition Labeling](https://ecosystem.supervise.ly/apps/action-recognition-labeling) 
+- [Action Recognition Labeling](https://ecosystem.supervisely.com/apps/action-recognition-labeling) 
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/action-recognition-labeling" src="https://imgur.com/3aCwsQ0.png" width="350px"/>
 
