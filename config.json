@@ -3,7 +3,7 @@
   "type": "app",
   "categories": ["videos", "collaboration"],
   "description": "Annotate Project using Queues",
-  "docker_image": "supervisely/collaboration:6.72.182",
+  "docker_image": "supervisely/collaboration:6.73.564",
   "main_script": "src/main.py",
   "gui_template": "src/gui.html",
   "task_location": "application_sessions",
