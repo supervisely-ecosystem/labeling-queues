@@ -1,9 +1,12 @@
 {
   "name": "Classic Labeling Queues",
   "type": "app",
-  "categories": ["videos", "collaboration"],
+  "categories": [
+    "videos",
+    "collaboration"
+  ],
   "description": "Annotate Project using Queues",
-  "docker_image": "supervisely/collaboration:6.73.564",
+  "docker_image": "supervisely/base-py-sdk-hardened:6.73.564",
   "main_script": "src/main.py",
   "gui_template": "src/gui.html",
   "task_location": "application_sessions",
@@ -14,9 +17,13 @@
   "icon_cover": false,
   "instance_version": "6.15.60",
   "context_menu": {
-    "target": ["videos_project"],
+    "target": [
+      "videos_project"
+    ],
     "context_category": "Labeling Jobs"
   },
-  "session_tags": ["labeling_jobs"],
+  "session_tags": [
+    "labeling_jobs"
+  ],
   "poster": "https://imgur.com/qK3W7jz.png"
 }
