@@ -1,6 +1,6 @@
 from sly_globals import *
 
-# from supervisely_lib.video_annotation.key_id_map import KeyIdMap
+# from supervisely.video_annotation.key_id_map import KeyIdMap
 
 from functools import partial
 from sly_visualize_progress import get_progress_cb, reset_progress, init_progress
