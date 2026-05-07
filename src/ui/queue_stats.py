@@ -5,7 +5,7 @@ import datetime
 
 import numpy as np
 
-import supervisely_lib as sly
+import supervisely as sly
 
 from sly_fields_names import ItemsStatusField
 import sly_globals as g
